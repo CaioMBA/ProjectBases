@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35728.132
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUI", "AppUI\AppUI.csproj", "{FFF9AC1D-73FC-4082-A96D-C01A3F6C358D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0DE56493-A752-418F-8376-2D7658052FD9} = {0DE56493-A752-418F-8376-2D7658052FD9}
+		{7F356483-9BB3-41D5-9A4F-6DF25706D210} = {7F356483-9BB3-41D5-9A4F-6DF25706D210}
+		{C0055B77-D443-4570-893D-252060086E22} = {C0055B77-D443-4570-893D-252060086E22}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{C0055B77-D443-4570-893D-252060086E22}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0DE56493-A752-418F-8376-2D7658052FD9} = {0DE56493-A752-418F-8376-2D7658052FD9}
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6} = {9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{0DE56493-A752-418F-8376-2D7658052FD9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{8A7241AC-13F5-40AE-A3A6-873E40631C07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossCutting", "CrossCutting\CrossCutting.csproj", "{7F356483-9BB3-41D5-9A4F-6DF25706D210}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0DE56493-A752-418F-8376-2D7658052FD9} = {0DE56493-A752-418F-8376-2D7658052FD9}
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6} = {9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0DE56493-A752-418F-8376-2D7658052FD9} = {0DE56493-A752-418F-8376-2D7658052FD9}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFF9AC1D-73FC-4082-A96D-C01A3F6C358D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF9AC1D-73FC-4082-A96D-C01A3F6C358D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF9AC1D-73FC-4082-A96D-C01A3F6C358D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FFF9AC1D-73FC-4082-A96D-C01A3F6C358D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF9AC1D-73FC-4082-A96D-C01A3F6C358D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0055B77-D443-4570-893D-252060086E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0055B77-D443-4570-893D-252060086E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0055B77-D443-4570-893D-252060086E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0055B77-D443-4570-893D-252060086E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DE56493-A752-418F-8376-2D7658052FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DE56493-A752-418F-8376-2D7658052FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DE56493-A752-418F-8376-2D7658052FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DE56493-A752-418F-8376-2D7658052FD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F356483-9BB3-41D5-9A4F-6DF25706D210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F356483-9BB3-41D5-9A4F-6DF25706D210}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F356483-9BB3-41D5-9A4F-6DF25706D210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F356483-9BB3-41D5-9A4F-6DF25706D210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F356483-9BB3-41D5-9A4F-6DF25706D210} = {8A7241AC-13F5-40AE-A3A6-873E40631C07}
+		{9BF7BAB2-E094-418E-BEE8-DD2011DC00D6} = {8A7241AC-13F5-40AE-A3A6-873E40631C07}
+	EndGlobalSection
+EndGlobal
