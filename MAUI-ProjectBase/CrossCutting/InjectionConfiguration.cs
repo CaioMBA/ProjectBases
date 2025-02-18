@@ -2,7 +2,6 @@
 using Domain;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace CrossCutting
 {
