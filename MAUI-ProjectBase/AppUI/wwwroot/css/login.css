@@ -1,0 +1,55 @@
+﻿.login-form {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+    .login-form label {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+        .login-form label span {
+            padding-left: 5%;
+            margin-bottom: -5%;
+        }
+
+        .login-form label input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+            .login-form label input:checked {
+            }
+
+        .login-form label .validation-message {
+            padding-left: 5%;
+            margin-top: -5%;
+            font-size: 10px;
+        }
+
+
+    .login-form button {
+        min-width: 10%;
+        max-width: 25%;
+        padding: 15px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        transition: all ease 0.3s;
+    }
+
+        .login-form button:hover {
+            background-color: white;
+            color: #007bff;
+        }

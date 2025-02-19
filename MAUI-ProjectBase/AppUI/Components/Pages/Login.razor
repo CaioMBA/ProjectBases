@@ -1,0 +1,49 @@
+﻿@layout Layout.EmptyLayout
+@page "/login"
+@using Domain.Models.ViewModels
+@attribute [AllowAnonymous]
+
+
+<link rel="stylesheet" href="css/login.css" />
+
+<EditForm class="login-form" Model="@loginModel" OnValidSubmit="HandleLogin">
+    <h1>Sign-In</h1>
+    <DataAnnotationsValidator />
+    <label for="login-input">
+        <span>Email</span>
+        <InputText id="login-input" @bind-Value="loginModel.Email" />
+        <ValidationMessage For="@(() => loginModel.Email)" />
+    </label>
+    <label for="password-input">
+        <span>Password</span>
+        <InputText id="password-input" @bind-Value="loginModel.Password" type="password" />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </label>
+    <label for="rememberme-input">
+        <span>Remember</span>
+        <InputCheckbox id="rememberme-input" @bind-Value="loginModel.RememberMe" type="checkbox" />
+        <ValidationMessage For="@(() => loginModel.RememberMe)" />
+    </label>
+
+    <button type="submit">Login</button>
+</EditForm>
+
+
+@code {
+    private LoginViewModel loginModel = new LoginViewModel();
+
+    private async Task HandleLogin()
+    {
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(new UserSessionModel()
+            {
+                Id = "0",
+                Name = loginModel.Email!.Split('@').FirstOrDefault(),
+                Email = loginModel.Email,
+                Token = "xpto",
+                Language = "en-us",
+                Role = "Admin"
+            }, loginModel.RememberMe);
+        _navigation.NavigateTo("/");
+    }
+}

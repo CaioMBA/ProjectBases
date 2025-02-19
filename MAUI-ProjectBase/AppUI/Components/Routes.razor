@@ -1,6 +1,28 @@
-﻿<Router AppAssembly="@typeof(MauiProgram).Assembly">
+﻿@using Microsoft.AspNetCore.Components.Authorization;
+
+<Router AppAssembly="@typeof(MauiProgram).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                @if (!context.User.Identity!.IsAuthenticated)
+                {
+                    _navigation.NavigateTo("/login", true);
+                }
+                else
+                {
+                    _navigation.NavigateTo("/not-authorized");
+                }
+            </NotAuthorized>
+            <Authorizing>
+                <h1>Authorizing...</h1>
+            </Authorizing>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        @if (_navigation is not null)
+        {
+            _navigation.NavigateTo("/not-found");
+        }
+    </NotFound>
 </Router>

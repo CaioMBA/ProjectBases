@@ -2,7 +2,8 @@
 using Domain.Models.ApplicationConfigurationModels;
 using CrossCutting;
 using Microsoft.Extensions.Logging;
-using Domain.Interfaces.ApplicationConfiguration;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
+using System.Reflection.PortableExecutable;
 
 namespace AppUI
 {
@@ -16,6 +17,8 @@ namespace AppUI
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Kadwa-Regular.ttf", "Kadwa");
+                    fonts.AddFont("Kadwa-Bold.ttf", "KadwaBold");
                 });
 
             builder.Services.AddMauiBlazorWebView();
@@ -43,11 +46,11 @@ namespace AppUI
         private static void ConfigureMauiPlatformDependencies(IServiceCollection serviceCollection)
         {
 #if ANDROID
-            serviceCollection.AddSingleton<IAssetService, AppUI.Platforms.Android.AssetService>();
+            serviceCollection.AddSingleton<IAssetServices, AppUI.Platforms.Android.AssetService>();
 #elif IOS
-            serviceCollection.AddSingleton<IAssetService, AppUI.Platforms.iOS.AssetService>();
+            serviceCollection.AddSingleton<IAssetServices, AppUI.Platforms.iOS.AssetService>();
 #elif WINDOWS
-            serviceCollection.AddSingleton<IAssetService, AppUI.Platforms.Windows.AssetService>();
+            serviceCollection.AddSingleton<IAssetServices, AppUI.Platforms.Windows.AssetService>();
 #endif
         }
 
@@ -63,23 +66,25 @@ namespace AppUI
 
         private static async Task<List<AppLanguageModel>> LoadAvailableLanguages(IServiceCollection serviceCollection)
         {
-            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IAssetService>();
+            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IAssetServices>();
 
             IEnumerable<string> assets = await assetService.ListAssetsAsync();
+            IEnumerable<string> languageAssets = assets.Where(x => x.ToLower().Trim().StartsWith("language") && x.ToLower().Trim().EndsWith(".json"));
 
             List<AppLanguageModel> languages = new();
-            foreach (string file in assets)
+            foreach (string file in languageAssets)
             {
-                if (file.ToLower().Trim().StartsWith("language") && file.ToLower().Trim().EndsWith(".json"))
+                string content = assetService.ReadAssetContent(file);
+                var languageModel = content.ToObject<AppLanguageModel>();
+                if (languageModel != null)
                 {
-                    using var stream = await FileSystem.OpenAppPackageFileAsync(file);
-                    using var reader = new StreamReader(stream);
-                    string content = reader.ReadToEnd();
-                    var languageModel = content.ToObject<AppLanguageModel>();
-                    if (languageModel != null)
-                    {
-                        languages.Add(languageModel);
-                    }
+                    string fileName = file.Split(Path.DirectorySeparatorChar).Last()
+                                          .Split(Path.AltDirectorySeparatorChar).Last()
+                                          .ToLower().Replace(".json", "");
+                    languageModel.LanguageCode = fileName;
+                    languageModel.LanguageFlag = $"flag_{fileName}.png";
+
+                    languages.Add(languageModel);
                 }
             }
 

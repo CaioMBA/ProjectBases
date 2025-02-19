@@ -1,0 +1,37 @@
+﻿@page "/not-found"
+@attribute [AllowAnonymous]
+
+<link rel="stylesheet" href="css/AppErrorHandling/not-found.css" />
+
+<div class="not-found-container">
+    <h1>404</h1>
+    <p>@(_settingsService._currentLanguage.not_found_p)</p>
+    <a href="/">@(_settingsService._currentLanguage.not_found_a) @secondsRemaining</a>
+</div>
+
+@code {
+    private Timer? timer;
+    private int secondsRemaining = 5;
+
+    protected override void OnInitialized()
+    {
+        timer = new Timer(_ =>
+        {
+            if (secondsRemaining > 0)
+            {
+                secondsRemaining--;
+                InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                InvokeAsync(() => _navigation.NavigateTo("/", true));
+                timer?.Dispose();
+            }
+        }, null, 1000, 1000);
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}

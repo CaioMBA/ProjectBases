@@ -1,11 +1,28 @@
 ﻿using Android.Content.Res;
-using Domain.Interfaces.ApplicationConfiguration;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
 
 [assembly: Dependency(typeof(AppUI.Platforms.Android.AssetService))]
 namespace AppUI.Platforms.Android
 {
-    public class AssetService : IAssetService
+    public class AssetService : IAssetServices
     {
+        public string ReadAssetContent(string path)
+        {
+            string content = string.Empty;
+            AssetManager? assets = Platform.AppContext.Assets;
+            try
+            {
+                using Stream? stream = assets.Open(path);
+                using StreamReader? reader = new(stream);
+                content = reader.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error on AppUI.Platforms.Android > ReadAssetContent. Error: {ex.Message}");
+            }
+            return content;
+        }
+
         public async Task<IEnumerable<string>> ListAssetsAsync()
         {
             List<string> assetFiles = new();

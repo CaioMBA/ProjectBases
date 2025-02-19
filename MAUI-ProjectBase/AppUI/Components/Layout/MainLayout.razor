@@ -7,7 +7,7 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <button @onclick="@(async () => await LogOut())" class="btn">Disconnect</button>
         </div>
 
         <article class="content px-4">
@@ -15,3 +15,30 @@
         </article>
     </main>
 </div>
+
+@code {
+    private async Task LogOut()
+    {
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(null);
+    }
+
+    protected override void OnInitialized()
+    {
+        _settingsService.OnLanguageChanged += UpdateUI;
+        _settingsService.OnSkinChanged += UpdateUI;
+    }
+
+    private async void UpdateUI()
+    {
+        await InvokeAsync(StateHasChanged);
+
+        await _jsRuntime.InvokeVoidAsync("location.reload");
+    }
+
+    public void Dispose()
+    {
+        _settingsService.OnLanguageChanged -= UpdateUI;
+        _settingsService.OnSkinChanged -= UpdateUI;
+    }
+}

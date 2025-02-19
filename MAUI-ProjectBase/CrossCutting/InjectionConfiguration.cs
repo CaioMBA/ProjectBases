@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using Domain;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Services;
+using Services.AuthenticationServices;
 
 namespace CrossCutting
 {
@@ -32,6 +36,7 @@ namespace CrossCutting
 
         public static void ConfigureDependenciesService(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddTransient<ISettingsServices, SettingsServices>();
         }
 
         public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
@@ -46,6 +51,11 @@ namespace CrossCutting
         public static void ConfigureDependenciesExtras(IServiceCollection serviceCollection)
         {
             serviceCollection.AddTransient<AppUtils>();
+            #region Authentication
+            serviceCollection.AddTransient<IAccountServices, AccountServices>();
+            serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            serviceCollection.AddAuthorizationCore();
+            #endregion
         }
     }
 }

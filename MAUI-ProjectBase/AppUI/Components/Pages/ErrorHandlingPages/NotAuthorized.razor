@@ -1,0 +1,37 @@
+﻿@page "/not-authorized"
+@attribute [AllowAnonymous]
+
+<link rel="stylesheet" href="css/AppErrorHandling/not-authorized.css" />
+
+<div class="not-authorized-container">
+    <h1>401</h1>
+    <p>@(_settingsService._currentLanguage.not_authorized_p)</p>
+    <a href="/">@(_settingsService._currentLanguage.not_authorized_a) @secondsRemaining</a>
+</div>
+
+@code {
+    private Timer? timer;
+    private int secondsRemaining = 5;
+
+    protected override void OnInitialized()
+    {
+        timer = new Timer(_ =>
+        {
+            if (secondsRemaining > 0)
+            {
+                secondsRemaining--;
+                InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                InvokeAsync(() => _navigation.NavigateTo("/", true));
+                timer?.Dispose();
+            }
+        }, null, 1000, 1000);
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}

@@ -1,15 +1,34 @@
-﻿using Domain.Interfaces.ApplicationConfiguration;
+﻿using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Windows.ApplicationModel;
 
 [assembly: Dependency(typeof(AppUI.Platforms.Windows.AssetService))]
 namespace AppUI.Platforms.Windows
 {
-    public class AssetService : IAssetService
+    public class AssetService : IAssetServices
     {
+        public string ReadAssetContent(string path)
+        {
+            var content = string.Empty;
+            var assetsPath = Package.Current.InstalledLocation.Path;
+            try
+            {
+                var fullPath = Path.Combine(assetsPath, path);
+                if (File.Exists(fullPath))
+                {
+                    content = File.ReadAllText(fullPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error on AppUI.Platforms.Windows > ReadAssetContent. Error: {ex.Message}");
+            }
+            return content;
+        }
+
         public async Task<IEnumerable<string>> ListAssetsAsync()
         {
             var assetFiles = new List<string>();
-            var assetsPath = Path.Combine(Package.Current.InstalledLocation.Path, "Resources", "Raw");
+            var assetsPath = Package.Current.InstalledLocation.Path;
 
             if (Directory.Exists(assetsPath))
             {

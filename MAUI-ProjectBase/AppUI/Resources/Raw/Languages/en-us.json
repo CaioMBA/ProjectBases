@@ -1,4 +1,8 @@
 ﻿{
+  "not_found_p": "Oops! The page you are looking for does not exist.",
+  "not_found_a": "Press to go back [ Home ] - Automatic in",
+  "not_authorized_p": "Oops! You're not authorized on this page.",
+  "not_authorized_a": "Press to go back [ Home ] - Automatic in",
   "login_username_input_label": "Username",
   "login_password_input_label": "Password"
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Models.ApplicationConfigurationModels;
+﻿using Domain.Enums;
+using Domain.Models.ApplicationConfigurationModels;
 
 namespace Domain
 {
@@ -39,6 +40,21 @@ namespace Domain
             }
 
             return Conection;
+        }
+
+        public async Task<string?> GetFromSecurityStorage(SecurityStorageVariablesEnum Enum)
+        {
+            return await SecureStorage.GetAsync(Enum.ToString());
+        }
+
+        public async Task SetToSecurityStorage(SecurityStorageVariablesEnum Enum, string Value)
+        {
+            await SecureStorage.SetAsync(Enum.ToString(), Value);
+        }
+
+        public void RemoveFromSecurityStorage(SecurityStorageVariablesEnum Enum)
+        {
+            SecureStorage.Remove(Enum.ToString());
         }
     }
 }

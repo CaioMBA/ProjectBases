@@ -4,6 +4,16 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.Authorization;
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.JSInterop
 @using AppUI
 @using AppUI.Components
+@using Domain.Models.ApplicationConfigurationModels;
+@using Domain.Interfaces.ApplicationConfigurationInterfaces
+@using Services.AuthenticationServices;
+@inject AuthenticationStateProvider _authStateProvider;
+@inject NavigationManager _navigation;
+@inject AppSettingsModel _appSettings;
+@inject ISettingsServices _settingsService;
+@inject IJSRuntime _jsRuntime;
