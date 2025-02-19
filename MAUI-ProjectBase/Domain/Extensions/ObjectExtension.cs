@@ -44,7 +44,7 @@ namespace Domain.Extensions
             return sb.ToString();
         }
 
-        public static string ToCSV(this List<Dictionary<string, object>> data)
+        public static string ToCSV(this IEnumerable<IDictionary<string, object>> data)
         {
             var sb = new StringBuilder();
             var keys = data.First().Keys;
@@ -59,19 +59,19 @@ namespace Domain.Extensions
                 foreach (var key in keys)
                 {
                     sb.Append((item[key] ?? "").ToString().Replace(";", "\\;"));
-                    sb.Append(";");
+                    sb.Append(';');
                 }
             }
             return sb.ToString();
         }
 
-        public static Expression<Func<T, bool>> IntoLambdaFilter<T>(this Dictionary<string, object?> filters)
+        public static Expression<Func<T, bool>> ToLambdaFilter<T>(this IDictionary<string, object?> filters)
         {
             var objectName = typeof(T).Name;
             var parameter = Expression.Parameter(typeof(T), "x");
             Expression? combinedExpression = null;
 
-            foreach (var filter in filters)
+            foreach (KeyValuePair<string, object?> filter in filters)
             {
                 var propertyName = filter.Key;
                 var propertyValue = filter.Value;
@@ -87,16 +87,15 @@ namespace Domain.Extensions
                 var property = Expression.Property(parameter, propertyInfo);
                 var constant = Expression.Constant(propertyValue);
 
-                var valueExpression = propertyInfo.PropertyType.IsGenericType &&
-                                      propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)
-                    ? (Expression)Expression.Convert(constant, propertyInfo.PropertyType)
-                    : constant;
+                var valueExpression = propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                                        ? (Expression)Expression.Convert(constant, propertyInfo.PropertyType)
+                                            : constant;
 
                 var equalityExpression = Expression.Equal(property, valueExpression);
 
                 combinedExpression = combinedExpression == null
-                    ? equalityExpression
-                    : Expression.AndAlso(combinedExpression, equalityExpression);
+                                        ? equalityExpression
+                                            : Expression.AndAlso(combinedExpression, equalityExpression);
             }
 
             if (combinedExpression == null)
