@@ -24,7 +24,7 @@
             }
             else
             {
-                InvokeAsync(() => _navigation.NavigateTo("/", true));
+                InvokeAsync(() => _navigation.NavigateTo("/"));
                 timer?.Dispose();
             }
         }, null, 1000, 1000);

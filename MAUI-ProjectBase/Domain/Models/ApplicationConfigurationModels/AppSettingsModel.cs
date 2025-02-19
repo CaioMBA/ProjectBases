@@ -22,6 +22,14 @@
     {
         public required string ApiID { get; set; }
         public required string Url { get; set; }
+        public required List<ApiEndPointConnectionModel>? EndPoints { get; set; }
+    }
+
+    public class ApiEndPointConnectionModel
+    {
+        public required string ApiEndPointID { get; set; }
+        public required string Path { get; set; }
+        public required string Method { get; set; }
         public required string Type { get; set; }
     }
 }

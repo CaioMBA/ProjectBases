@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Data.ApiRepositories;
+using Data.DatabaseRepositories;
 using Domain;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
@@ -42,9 +44,11 @@ namespace CrossCutting
         public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
         {
             #region DataBase
+            serviceCollection.AddTransient<DefaultDatabaseAccess>();
             #endregion
 
             #region API
+            serviceCollection.AddTransient<DefaultApiAccess>();
             #endregion
         }
 

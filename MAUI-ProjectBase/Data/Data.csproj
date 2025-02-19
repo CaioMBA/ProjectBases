@@ -1,17 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="MySql.Data" Version="9.2.0" />
-    <PackageReference Include="Npgsql" Version="9.0.2" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="23.7.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AdoNetCore.AseClient" Version="0.19.2" />
+		<PackageReference Include="Dapper" Version="2.1.66" />
+		<PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.2" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+		<PackageReference Include="MySql.Data" Version="9.2.0" />
+		<PackageReference Include="Npgsql" Version="9.0.2" />
+		<PackageReference Include="Oracle.ManagedDataAccess" Version="23.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="DatabaseRepositories\EntityFrameworkRepositories\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
 
 </Project>
