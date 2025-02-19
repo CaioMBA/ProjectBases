@@ -51,12 +51,18 @@ namespace Services.AuthenticationServices
 
         private ClaimsPrincipal GetClaimsPrincipal(UserSessionModel userSession)
         {
-            var claims = new ClaimsIdentity(new List<Claim>()
-                {
-                    new Claim(ClaimTypes.Name, userSession.Name),
-                    new Claim(ClaimTypes.Email, userSession.Email),
-                    new Claim(ClaimTypes.Role, userSession.Role)
-                }, "CustomAuth");
+            var claimList = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, userSession.Name),
+                new Claim(ClaimTypes.Email, userSession.Email),
+            };
+
+            foreach (var role in userSession.Roles)
+            {
+                claimList.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var claims = new ClaimsIdentity(claimList, "MauiHybridAuth");
             var identity = new ClaimsIdentity(claims);
             return new ClaimsPrincipal(identity);
         }

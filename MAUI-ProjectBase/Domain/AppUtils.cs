@@ -1,5 +1,7 @@
 ﻿using Domain.Enums;
+using Domain.Extensions;
 using Domain.Models.ApplicationConfigurationModels;
+using System.Security.Cryptography;
 
 namespace Domain
 {
@@ -44,12 +46,32 @@ namespace Domain
 
         public async Task<string?> GetFromSecurityStorage(SecurityStorageVariablesEnum Enum)
         {
-            return await SecureStorage.GetAsync(Enum.ToString());
+            var cryptedValue = await SecureStorage.GetAsync(Enum.ToString());
+            if (cryptedValue == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                return cryptedValue.Decrypt();
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine($"Error decoding Base64: {ex.Message}");
+                return null;
+            }
+            catch (CryptographicException ex)
+            {
+                Console.WriteLine($"Error during decryption: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task SetToSecurityStorage(SecurityStorageVariablesEnum Enum, string Value)
         {
-            await SecureStorage.SetAsync(Enum.ToString(), Value);
+            string cryptedValue = Value.Encrypt();
+            await SecureStorage.SetAsync(Enum.ToString(), cryptedValue);
         }
 
         public void RemoveFromSecurityStorage(SecurityStorageVariablesEnum Enum)

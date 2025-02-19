@@ -1,12 +1,12 @@
-﻿@page "/not-authorized"
+﻿@page "/not-found"
 @attribute [AllowAnonymous]
 
-<link rel="stylesheet" href="css/AppErrorHandling/not-authorized.css" />
+<link rel="stylesheet" href="css/AppHandling/not-found.css" />
 
-<div class="not-authorized-container">
-    <h1>401</h1>
-    <p>@(_settingsService._currentLanguage.not_authorized_p)</p>
-    <a href="/">@(_settingsService._currentLanguage.not_authorized_a) @secondsRemaining</a>
+<div class="not-found-container">
+    <h1>404</h1>
+    <p>@(_settingsService._currentLanguage.not_found_p)</p>
+    <a href="/">@(_settingsService._currentLanguage.not_found_a) @secondsRemaining</a>
 </div>
 
 @code {

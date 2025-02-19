@@ -42,7 +42,7 @@
                 Email = loginModel.Email,
                 Token = "xpto",
                 Language = "en-us",
-                Role = "Admin"
+                Roles = new List<string> { "Admin" }
             }, loginModel.RememberMe);
         _navigation.NavigateTo("/");
     }

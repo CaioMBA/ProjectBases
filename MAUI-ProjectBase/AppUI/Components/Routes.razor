@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization;
+﻿@using AppUI.Components.Pages.HandlingPages
+@using Microsoft.AspNetCore.Components.Authorization;
 
 <Router AppAssembly="@typeof(MauiProgram).Assembly">
     <Found Context="routeData">
@@ -6,15 +7,15 @@
             <NotAuthorized>
                 @if (!context.User.Identity!.IsAuthenticated)
                 {
-                    _navigation.NavigateTo("/login", true);
+                    _navigation.NavigateTo("/login");
                 }
                 else
                 {
-                    _navigation.NavigateTo("/not-authorized");
+                    _navigation.NavigateTo("/forbidden");
                 }
             </NotAuthorized>
             <Authorizing>
-                <h1>Authorizing...</h1>
+                <AuthorizingUser />
             </Authorizing>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />

@@ -1,12 +1,12 @@
-﻿@page "/not-found"
+﻿@page "/forbidden"
 @attribute [AllowAnonymous]
 
-<link rel="stylesheet" href="css/AppErrorHandling/not-found.css" />
+<link rel="stylesheet" href="css/AppHandling/forbidden.css" />
 
-<div class="not-found-container">
-    <h1>404</h1>
-    <p>@(_settingsService._currentLanguage.not_found_p)</p>
-    <a href="/">@(_settingsService._currentLanguage.not_found_a) @secondsRemaining</a>
+<div class="forbidden-container">
+    <h1>403</h1>
+    <p>@(_settingsService._currentLanguage.forbidden_p)</p>
+    <a href="/">@(_settingsService._currentLanguage.forbidden_a) @secondsRemaining</a>
 </div>
 
 @code {

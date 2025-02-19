@@ -1,0 +1,18 @@
+﻿@page "/authorizing"
+@attribute [AllowAnonymous]
+
+
+<link rel="stylesheet" href="css/AppHandling/authorizing.css" />
+
+<div class="authorizing-container">
+    <h1>@(_settingsService._currentLanguage.authorizing_h1)</h1>
+    <p>@(_settingsService._currentLanguage.authorizing_p)</p>
+    <a @onclick="@(() => GoToLogin())">@(_settingsService._currentLanguage.authorizing_a)</a>
+</div>
+
+@code {
+    private void GoToLogin()
+    {
+        _navigation.NavigateTo("/login");
+    }
+}

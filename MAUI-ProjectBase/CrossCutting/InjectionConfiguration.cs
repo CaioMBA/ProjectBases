@@ -56,7 +56,7 @@ namespace CrossCutting
         {
             serviceCollection.AddTransient<AppUtils>();
             #region Authentication
-            serviceCollection.AddTransient<IAccountServices, AccountServices>();
+            serviceCollection.AddSingleton<IAccountServices, AccountServices>();
             serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             serviceCollection.AddAuthorizationCore();
             #endregion

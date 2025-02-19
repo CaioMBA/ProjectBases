@@ -15,13 +15,11 @@ namespace Domain.Extensions
 
             return $"{first.ToUpper()}{rest}";
         }
-
         public static bool ToInteger(this String str, out int result)
         {
             bool success = Int32.TryParse(str, out result);
             return success;
         }
-
         public static bool ToLong(this String str, out long result)
         {
             bool success = Int64.TryParse(str, out result);
@@ -34,7 +32,22 @@ namespace Domain.Extensions
 
             return str.Substring(0, Limit);
         }
+        public static byte[] ToBytes(this String str)
+        {
+            return Encoding.UTF8.GetBytes(str);
+        }
+        public static byte[] HexToBytes(this string hex)
+        {
+            if (hex.Length % 2 != 0)
+                throw new ArgumentException("Invalid length for a hex string.");
 
+            byte[] bytes = new byte[hex.Length / 2];
+            for (int i = 0; i < hex.Length; i += 2)
+            {
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            }
+            return bytes;
+        }
         public static string ToSHA256(this String str)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -50,7 +63,6 @@ namespace Domain.Extensions
                 return builder.ToString();
             }
         }
-
         public static string ToBase64(this String str)
         {
             try
@@ -64,7 +76,6 @@ namespace Domain.Extensions
                 throw new Exception("Error converting to base64");
             }
         }
-
         public static string FromBase64(this String str)
         {
             try
@@ -78,13 +89,11 @@ namespace Domain.Extensions
                 throw new Exception("Error converting from base64");
             }
         }
-
-        public static bool IsBase64String(this string s)
+        public static bool IsBase64String(this String s)
         {
             s = s.Trim();
             return (s.Length % 4 == 0) && Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
         }
-
         public static T? ToObject<T>(this String str)
         {
             return JsonConvert.DeserializeObject<T>(str);
