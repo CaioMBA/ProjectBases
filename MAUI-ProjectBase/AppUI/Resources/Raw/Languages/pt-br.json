@@ -1,0 +1,9 @@
+﻿{
+  "loading_text": "Carregando",
+  "not_found_p": "Ops! A página que você está procurando não existe.",
+  "not_found_a": "Pressione para voltar [ Início ] - Automático em",
+  "forbidden_p": "Ops! Você não tem permissão para acessar esta página.",
+  "forbidden_a": "Pressione para voltar [ Início ] - Automático em",
+  "login_username_input_label": "Usuário",
+  "login_password_input_label": "Senha"
+}

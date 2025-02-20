@@ -13,6 +13,7 @@
             either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
 		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>AppUI</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -63,6 +64,7 @@
 	<ItemGroup>
 		<Content Remove="Resources\Raw\appsettings.json" />
 		<Content Remove="Resources\Raw\Languages\en-us.json" />
+		<Content Remove="Resources\Raw\Languages\pt-br.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -78,8 +80,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\assets\fonts\" />
-	  <Folder Include="wwwroot\assets\images\" />
+		<Folder Include="wwwroot\assets\fonts\" />
 	</ItemGroup>
 
 </Project>

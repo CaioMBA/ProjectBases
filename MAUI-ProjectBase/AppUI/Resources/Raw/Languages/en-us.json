@@ -1,11 +1,9 @@
 ﻿{
+  "loading_text": "Loading",
   "not_found_p": "Oops! The page you are looking for does not exist.",
   "not_found_a": "Press to go back [ Home ] - Automatic in",
   "forbidden_p": "Oops! You don't have permission for this page.",
   "forbidden_a": "Press to go back [ Home ] - Automatic in",
-  "authorizing_h1": "Authorizing",
-  "authorizing_p": "Checking your authorization...",
-  "authorizing_a": "Press to go to [ Login ]",
   "login_username_input_label": "Username",
   "login_password_input_label": "Password"
 }

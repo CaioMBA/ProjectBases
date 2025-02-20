@@ -7,6 +7,23 @@
 
     <main>
         <div class="top-row px-4">
+            <select class="form-control" @onchange="@(async (e) => _settingsService.ChangeSkin(e.Value.ToString()))">
+                @foreach (string skin in availableSkins)
+                {
+                    <option value="@skin" selected="@(_appSettings.Skin == skin)">
+                        @skin
+                    </option>
+                }
+            </select>
+            <img src="assets/images/language/@(_settingsService._currentLanguage.LanguageFlag)" />
+            <select class="form-control" @onchange="@(async (e) => _settingsService.ChangeLanguage(e.Value.ToString()))">
+                @foreach (AppLanguageModel language in availableLanguages)
+                {
+                    <option value="@language.LanguageCode" selected="@(_settingsService._currentLanguage.LanguageCode == language.LanguageCode)">
+                        @language.LanguageCode
+                    </option>
+                }
+            </select>
             <button @onclick="@(async () => await LogOut())" class="btn">Disconnect</button>
         </div>
 
@@ -16,7 +33,12 @@
     </main>
 </div>
 
+<script src="js/MainLayout.js"></script>
+
 @code {
+    private List<AppLanguageModel> availableLanguages => _settingsService.AvailableLanguages();
+    private List<string> availableSkins => new List<string> { "light", "dark" };
+
     private async Task LogOut()
     {
         var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;

@@ -21,6 +21,11 @@ main {
     align-items: center;
 }
 
+    .top-row img {
+        max-width: 30px;
+        border-radius: 5px;
+    }
+
     .top-row ::deep a, .top-row ::deep .btn-link {
         white-space: nowrap;
         margin-left: 1.5rem;
@@ -35,6 +40,7 @@ main {
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
 
 @media (max-width: 640.98px) {
     .top-row {

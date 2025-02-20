@@ -11,5 +11,6 @@ namespace Domain.Interfaces.ApplicationConfigurationInterfaces
 
         void ChangeLanguage(string languageCode);
         void ChangeSkin(string skin);
+        List<AppLanguageModel> AvailableLanguages();
     }
 }

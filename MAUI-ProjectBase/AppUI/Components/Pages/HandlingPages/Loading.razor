@@ -1,0 +1,15 @@
+﻿@layout Layout.EmptyLayout
+@page "/loading"
+@attribute [AllowAnonymous]
+
+<div class="loading-overlay">
+    <div class="loading-container">
+        <div class="loading-ring"></div>
+        <div class="loading-ring"></div>
+        <div class="loading-ring"></div>
+        <div class="loading-ring"></div>
+        <h6>@(_settingsService._currentLanguage.loading_text)</h6>
+    </div>
+</div>
+
+

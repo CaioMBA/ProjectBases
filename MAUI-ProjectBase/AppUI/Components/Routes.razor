@@ -1,5 +1,5 @@
 ﻿@using AppUI.Components.Pages.HandlingPages
-@using Microsoft.AspNetCore.Components.Authorization;
+
 
 <Router AppAssembly="@typeof(MauiProgram).Assembly">
     <Found Context="routeData">
@@ -15,7 +15,7 @@
                 }
             </NotAuthorized>
             <Authorizing>
-                <AuthorizingUser />
+                <Loading />
             </Authorizing>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />

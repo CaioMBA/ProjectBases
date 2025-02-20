@@ -82,7 +82,7 @@ namespace AppUI
                                           .Split(Path.AltDirectorySeparatorChar).Last()
                                           .ToLower().Replace(".json", "");
                     languageModel.LanguageCode = fileName;
-                    languageModel.LanguageFlag = $"flag_{fileName}.png";
+                    languageModel.LanguageFlag = $"{fileName}.png";
 
                     languages.Add(languageModel);
                 }
