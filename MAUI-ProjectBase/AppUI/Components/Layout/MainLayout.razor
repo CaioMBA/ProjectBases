@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+<link rel="stylesheet" href="css/@(_appSettings.Skin).css" />
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -8,10 +10,10 @@
     <main>
         <div class="top-row px-4">
             <select class="form-control" @onchange="@(async (e) => _settingsService.ChangeSkin(e.Value.ToString()))">
-                @foreach (string skin in availableSkins)
+                @foreach (AppSkinModel skin in availableSkins)
                 {
-                    <option value="@skin" selected="@(_appSettings.Skin == skin)">
-                        @skin
+                    <option value="@skin.Name" selected="@(_appSettings.Skin == skin.Name)">
+                        @skin.Name
                     </option>
                 }
             </select>
@@ -37,7 +39,7 @@
 
 @code {
     private List<AppLanguageModel> availableLanguages => _settingsService.AvailableLanguages();
-    private List<string> availableSkins => new List<string> { "light", "dark" };
+    private List<AppSkinModel> availableSkins => _settingsService.AvailableSkins();
 
     private async Task LogOut()
     {
@@ -51,11 +53,17 @@
         _settingsService.OnSkinChanged += UpdateUI;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _jsRuntime.InvokeVoidAsync("preventF5");
+        }
+    }
+
     private async void UpdateUI()
     {
         await InvokeAsync(StateHasChanged);
-
-        await _jsRuntime.InvokeVoidAsync("location.reload");
     }
 
     public void Dispose()

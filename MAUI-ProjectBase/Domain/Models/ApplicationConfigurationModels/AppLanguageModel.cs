@@ -11,5 +11,6 @@
         public string? forbidden_a { get; set; }
         public string? login_username_input_label { get; set; }
         public string? login_password_input_label { get; set; }
+        public string? sidebar_home { get; set; }
     }
 }

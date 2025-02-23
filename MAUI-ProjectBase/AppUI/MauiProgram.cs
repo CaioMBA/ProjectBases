@@ -1,9 +1,8 @@
-﻿using Domain.Extensions;
-using Domain.Models.ApplicationConfigurationModels;
-using CrossCutting;
-using Microsoft.Extensions.Logging;
+﻿using CrossCutting;
+using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
-using System.Reflection.PortableExecutable;
+using Domain.Models.ApplicationConfigurationModels;
+using Microsoft.Extensions.Logging;
 
 namespace AppUI
 {
@@ -31,7 +30,9 @@ namespace AppUI
             }
             List<AppLanguageModel> availableLanguages = LoadAvailableLanguages(builder.Services).Result;
 
-            InjectionConfiguration.ConfigureDependencies(builder.Services, appSettings, availableLanguages);
+            List<AppSkinModel> availableSkins = LoadAvailableSkins(builder.Services).Result;
+
+            InjectionConfiguration.ConfigureDependencies(builder.Services, appSettings, availableLanguages, availableSkins);
 
             #region IF-DEBUG
 #if DEBUG
@@ -69,26 +70,54 @@ namespace AppUI
             var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IAssetServices>();
 
             IEnumerable<string> assets = await assetService.ListAssetsAsync();
-            IEnumerable<string> languageAssets = assets.Where(x => x.ToLower().Trim().StartsWith("language") && x.ToLower().Trim().EndsWith(".json"));
+            IEnumerable<string> languageAssets = assets.Where(x => x.ToLower().Trim().StartsWith(@"language")
+                                                                   && x.ToLower().Trim().EndsWith(@".json"));
 
-            List<AppLanguageModel> languages = new();
-            foreach (string file in languageAssets)
-            {
-                string content = assetService.ReadAssetContent(file);
-                var languageModel = content.ToObject<AppLanguageModel>();
-                if (languageModel != null)
-                {
-                    string fileName = file.Split(Path.DirectorySeparatorChar).Last()
-                                          .Split(Path.AltDirectorySeparatorChar).Last()
-                                          .ToLower().Replace(".json", "");
-                    languageModel.LanguageCode = fileName;
-                    languageModel.LanguageFlag = $"{fileName}.png";
+            List<AppLanguageModel?> languages = assets.Where(x => x.ToLower().Trim().StartsWith("language")
+                                                                        && x.ToLower().Trim().EndsWith(".json"))
+                                                            .Select(file =>
+                                                            {
+                                                                string content = assetService.ReadAssetContent(file);
+                                                                var languageModel = content.ToObject<AppLanguageModel>();
+                                                                if (languageModel != null)
+                                                                {
+                                                                    string fileName = Path.GetFileNameWithoutExtension(file).ToLower();
+                                                                    languageModel.LanguageCode = fileName;
+                                                                    languageModel.LanguageFlag = $"{fileName}.png";
+                                                                    return languageModel;
+                                                                }
+                                                                return null;
+                                                            }).ToList();
 
-                    languages.Add(languageModel);
-                }
-            }
+            return languages.Where(x => x is not null).ToList()!;
+        }
 
-            return languages;
+        private static async Task<List<AppSkinModel>> LoadAvailableSkins(IServiceCollection serviceCollection)
+        {
+            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IAssetServices>();
+
+            IEnumerable<string> assets = await assetService.ListAssetsAsync();
+            List<AppSkinModel> skins = assets.Where(x =>
+                                                (x.ToLower().Trim().StartsWith(@"wwwroot/css/skins")
+                                                 ||
+                                                 x.ToLower().Trim().StartsWith(@"wwwroot\css\skins"))
+                                                && x.ToLower().Trim().EndsWith(@".css"))
+                                        .Select(x =>
+                                        {
+                                            var name = x.ToLower()
+                                                      .Replace(@"wwwroot/css/skins/", "")
+                                                      .Replace(@"wwwroot\css\skins\", "")
+                                                      .Replace(@".css", "");
+
+                                            return new AppSkinModel()
+                                            {
+                                                Name = name,
+                                                Path = x.ToLower(),
+                                                Icon = $"{name}_skin.png"
+                                            };
+                                        })
+                                        .ToList();
+            return skins;
         }
     }
 }

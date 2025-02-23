@@ -5,12 +5,12 @@ namespace Domain.Interfaces.ApplicationConfigurationInterfaces
     public interface ISettingsServices
     {
         AppLanguageModel _currentLanguage { get; }
-
         event Action? OnLanguageChanged;
-        event Action? OnSkinChanged;
-
-        void ChangeLanguage(string languageCode);
-        void ChangeSkin(string skin);
         List<AppLanguageModel> AvailableLanguages();
+        void ChangeLanguage(string languageCode);
+
+        event Action? OnSkinChanged;
+        List<AppSkinModel> AvailableSkins();
+        void ChangeSkin(string skin);
     }
 }

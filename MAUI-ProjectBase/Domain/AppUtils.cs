@@ -46,7 +46,7 @@ namespace Domain
 
         public async Task<string?> GetFromSecurityStorage(SecurityStorageVariablesEnum Enum)
         {
-            var cryptedValue = await SecureStorage.GetAsync(Enum.ToString());
+            var cryptedValue = await SecureStorage.Default.GetAsync(Enum.ToString());
             if (cryptedValue == null)
             {
                 return null;
@@ -71,12 +71,12 @@ namespace Domain
         public async Task SetToSecurityStorage(SecurityStorageVariablesEnum Enum, string Value)
         {
             string cryptedValue = Value.Encrypt();
-            await SecureStorage.SetAsync(Enum.ToString(), cryptedValue);
+            await SecureStorage.Default.SetAsync(Enum.ToString(), cryptedValue);
         }
 
         public void RemoveFromSecurityStorage(SecurityStorageVariablesEnum Enum)
         {
-            SecureStorage.Remove(Enum.ToString());
+            SecureStorage.Default.Remove(Enum.ToString());
         }
     }
 }

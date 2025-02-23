@@ -5,5 +5,6 @@
   "forbidden_p": "Oops! You don't have permission for this page.",
   "forbidden_a": "Press to go back [ Home ] - Automatic in",
   "login_username_input_label": "Username",
-  "login_password_input_label": "Password"
+  "login_password_input_label": "Password",
+  "sidebar_home": "Home"
 }

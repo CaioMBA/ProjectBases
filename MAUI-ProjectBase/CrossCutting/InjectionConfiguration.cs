@@ -15,10 +15,12 @@ namespace CrossCutting
     {
         public static void ConfigureDependencies(IServiceCollection serviceCollection,
                                                  AppSettingsModel appSettings,
-                                                 List<AppLanguageModel> availableLanguages)
+                                                 List<AppLanguageModel> availableLanguages,
+                                                 List<AppSkinModel> availableSkins)
         {
             serviceCollection.AddSingleton(appSettings);
             serviceCollection.AddSingleton(availableLanguages);
+            serviceCollection.AddSingleton(availableSkins);
             ConfigureAutoMapper(serviceCollection);
             ConfigureDependenciesService(serviceCollection);
             ConfigureDependenciesRepository(serviceCollection);
@@ -38,7 +40,7 @@ namespace CrossCutting
 
         public static void ConfigureDependenciesService(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<ISettingsServices, SettingsServices>();
+            serviceCollection.AddSingleton<ISettingsServices, SettingsServices>();
         }
 
         public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
@@ -54,10 +56,10 @@ namespace CrossCutting
 
         public static void ConfigureDependenciesExtras(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<AppUtils>();
+            serviceCollection.AddSingleton<AppUtils>();
             #region Authentication
-            serviceCollection.AddSingleton<IAccountServices, AccountServices>();
-            serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            serviceCollection.AddScoped<IAccountServices, AccountServices>();
+            serviceCollection.AddSingleton<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             serviceCollection.AddAuthorizationCore();
             #endregion
         }

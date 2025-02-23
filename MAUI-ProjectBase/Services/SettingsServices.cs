@@ -9,6 +9,7 @@ namespace Services
         private readonly AppUtils _utils;
         private readonly AppSettingsModel _settings;
         private readonly List<AppLanguageModel> _availableLanguages;
+        private readonly List<AppSkinModel> _availableSkins;
 
         public event Action? OnLanguageChanged;
         public event Action? OnSkinChanged;
@@ -16,15 +17,18 @@ namespace Services
         public AppLanguageModel _currentLanguage { get; private set; }
 
         public SettingsServices(AppUtils utils,
-                               List<AppLanguageModel> availableLanguages,
-                               AppSettingsModel settings)
+                                List<AppLanguageModel> availableLanguages,
+                                List<AppSkinModel> availableSkins,
+                                AppSettingsModel settings)
         {
             _settings = settings;
             _utils = utils;
             _availableLanguages = availableLanguages;
+            _availableSkins = availableSkins;
             _currentLanguage = _availableLanguages.FirstOrDefault(x => x.LanguageCode == (_settings.Language ?? "en-us"))!;
         }
 
+        #region Language
         public List<AppLanguageModel> AvailableLanguages()
         {
             return _availableLanguages;
@@ -40,11 +44,20 @@ namespace Services
                 OnLanguageChanged?.Invoke();
             }
         }
+        #endregion Language
+
+
+        #region Skin
+        public List<AppSkinModel> AvailableSkins()
+        {
+            return _availableSkins;
+        }
 
         public void ChangeSkin(string skin)
         {
             _settings.Skin = skin;
             OnSkinChanged?.Invoke();
         }
+        #endregion Skin
     }
 }
