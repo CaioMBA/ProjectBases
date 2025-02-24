@@ -3,6 +3,6 @@
     public class AuthenticationHeaderModel
     {
         public required string Type { get; set; }
-        public required string Value { get; set; }
+        public required string Authorization { get; set; }
     }
 }
