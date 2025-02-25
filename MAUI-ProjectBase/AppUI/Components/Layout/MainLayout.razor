@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using System.Globalization;
 
 <link rel="stylesheet" href="css/Skins/@(_appSettings.Skin).css" />
 
@@ -31,7 +32,7 @@
             <div class="custom_dropdown-container">
                 <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("language")'>
                     <img src="assets/images/languages/@(_settingsService._currentLanguage.LanguageFlag)" class="skin-icon" />
-                    @(_settingsService._currentLanguage.LanguageCode)
+                    @(_settingsService._currentLanguage.LanguageName)
                 </button>
 
                 @if (isLanguageDropdownOpen)
@@ -41,13 +42,13 @@
                         {
                             <li @onclick='() => ChangeDropdownSelectedValue("language", language.LanguageCode)'>
                                 <img src="assets/images/languages/@language.LanguageFlag" class="skin-icon" />
-                                @language.LanguageCode
+                                @language.LanguageName
                             </li>
                         }
                     </ul>
                 }
             </div>
-            <button @onclick="@(async () => await LogOut())" class="btn">Disconnect</button>
+            <button @onclick="@(async () => await LogOut())" class="btn">@(_settingsService._currentLanguage.sidebar_logout_button)</button>
         </div>
 
         <article class="content px-4">

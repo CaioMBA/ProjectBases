@@ -1,4 +1,5 @@
 ﻿{
+  "LanguageName": "English [ USA ]",
   "loading_text": "Loading",
   "not_found_p": "Oops! The page you are looking for does not exist.",
   "not_found_a": "Press to go back [ Home ] - Automatic in",
@@ -6,5 +7,6 @@
   "forbidden_a": "Press to go back [ Home ] - Automatic in",
   "login_username_input_label": "Username",
   "login_password_input_label": "Password",
+  "sidebar_logout_button": "Disconnect",
   "sidebar_home": "Home"
 }

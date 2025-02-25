@@ -44,6 +44,17 @@ namespace Domain
             return Conection;
         }
 
+        public string GetSystemTheme()
+        {
+            return AppInfo.Current.RequestedTheme switch
+            {
+                AppTheme.Light => "light",
+                AppTheme.Dark => "dark",
+                AppTheme.Unspecified => "light",
+                _ => "light"
+            };
+        }
+
         public async Task<string?> GetFromSecurityStorage(SecurityStorageVariablesEnum Enum)
         {
             var cryptedValue = await SecureStorage.Default.GetAsync(Enum.ToString());

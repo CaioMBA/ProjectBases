@@ -1,5 +1,4 @@
 ﻿using Domain.Models.ApplicationConfigurationModels;
-
 namespace Domain.Interfaces.ApplicationConfigurationInterfaces
 {
     public interface ISettingsServices

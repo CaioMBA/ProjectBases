@@ -1,6 +1,7 @@
 ﻿using Domain.Models.ApplicationConfigurationModels;
 using Domain;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
+using System.Globalization;
 
 namespace Services
 {
@@ -26,8 +27,13 @@ namespace Services
             _utils = utils;
             _availableLanguages = availableLanguages;
             _availableSkins = availableSkins;
-            _currentLanguage = _availableLanguages.FirstOrDefault(x => x.LanguageCode == (_settings.Language ?? "en-us"))!;
-            _currentSkin = _availableSkins.FirstOrDefault(x => x.Name == (_settings.Skin ?? "light"))!;
+            _currentLanguage = _availableLanguages.FirstOrDefault(x =>
+                    x.LanguageCode!.Equals(CultureInfo.CurrentCulture.Name ?? _settings.Language, StringComparison.OrdinalIgnoreCase)
+                ) ?? _availableLanguages.First();
+
+            _currentSkin = _availableSkins.FirstOrDefault(x =>
+                            x.Name!.Equals((_utils.GetSystemTheme() ?? _settings.Skin), StringComparison.OrdinalIgnoreCase)
+                        ) ?? _availableSkins.First();
         }
 
         #region Language
@@ -38,11 +44,13 @@ namespace Services
 
         public void ChangeLanguage(string languageCode)
         {
-            var newLanguage = _availableLanguages.FirstOrDefault(x => x.LanguageCode == languageCode);
-            if (newLanguage != null && newLanguage != _currentLanguage)
+            var newLanguage = _availableLanguages.FirstOrDefault(x => x.LanguageCode!.Equals(languageCode, StringComparison.OrdinalIgnoreCase));
+            if (newLanguage is not null && newLanguage != _currentLanguage)
             {
                 _settings.Language = languageCode;
                 _currentLanguage = newLanguage;
+                CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(languageCode);
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(languageCode);
                 OnLanguageChanged?.Invoke();
             }
         }
@@ -57,8 +65,8 @@ namespace Services
 
         public void ChangeSkin(string skin)
         {
-            var newSkin = _availableSkins.FirstOrDefault(x => x.Name == skin);
-            if (newSkin != null && newSkin != _currentSkin)
+            var newSkin = _availableSkins.FirstOrDefault(x => x.Name!.Equals(skin, StringComparison.OrdinalIgnoreCase));
+            if (newSkin is not null && newSkin != _currentSkin)
             {
                 _settings.Skin = skin;
                 _currentSkin = newSkin;
