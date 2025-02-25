@@ -27,16 +27,18 @@ namespace Services
             _utils = utils;
             _availableLanguages = availableLanguages;
             _availableSkins = availableSkins;
-            _currentLanguage = _availableLanguages.FirstOrDefault(x =>
-                    x.LanguageCode!.Equals(CultureInfo.CurrentCulture.Name ?? _settings.Language, StringComparison.OrdinalIgnoreCase)
-                ) ?? _availableLanguages.First();
-
-            _currentSkin = _availableSkins.FirstOrDefault(x =>
-                            x.Name!.Equals((_utils.GetSystemTheme() ?? _settings.Skin), StringComparison.OrdinalIgnoreCase)
-                        ) ?? _availableSkins.First();
+            _currentLanguage = GetStartLanguage();
+            _currentSkin = GetStartSkin();
         }
 
         #region Language
+        private AppLanguageModel GetStartLanguage()
+        {
+            return _availableLanguages.FirstOrDefault(x =>
+                    x.LanguageCode!.Equals(CultureInfo.CurrentCulture.Name ?? _settings.Language, StringComparison.OrdinalIgnoreCase)
+                ) ?? _availableLanguages.First();
+        }
+
         public List<AppLanguageModel> AvailableLanguages()
         {
             return _availableLanguages;
@@ -58,6 +60,13 @@ namespace Services
 
 
         #region Skin
+        private AppSkinModel GetStartSkin()
+        {
+            return _availableSkins.FirstOrDefault(x =>
+                            x.Name!.Equals((_utils.GetSystemTheme() ?? _settings.Skin), StringComparison.OrdinalIgnoreCase)
+                        ) ?? _availableSkins.First();
+        }
+
         public List<AppSkinModel> AvailableSkins()
         {
             return _availableSkins;

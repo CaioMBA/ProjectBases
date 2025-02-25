@@ -95,9 +95,6 @@ main {
         max-width: 32px;
     }
 
-        .custom_dropdown-menu li img {
-        }
-
         .custom_dropdown-menu li:hover {
             background: #f0f0f0;
         }
