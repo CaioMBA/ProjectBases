@@ -9,6 +9,7 @@ namespace Domain.Interfaces.ApplicationConfigurationInterfaces
         List<AppLanguageModel> AvailableLanguages();
         void ChangeLanguage(string languageCode);
 
+        AppSkinModel _currentSkin { get; }
         event Action? OnSkinChanged;
         List<AppSkinModel> AvailableSkins();
         void ChangeSkin(string skin);

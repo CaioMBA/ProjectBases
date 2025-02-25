@@ -15,6 +15,7 @@ namespace Services
         public event Action? OnSkinChanged;
 
         public AppLanguageModel _currentLanguage { get; private set; }
+        public AppSkinModel _currentSkin { get; private set; }
 
         public SettingsServices(AppUtils utils,
                                 List<AppLanguageModel> availableLanguages,
@@ -26,6 +27,7 @@ namespace Services
             _availableLanguages = availableLanguages;
             _availableSkins = availableSkins;
             _currentLanguage = _availableLanguages.FirstOrDefault(x => x.LanguageCode == (_settings.Language ?? "en-us"))!;
+            _currentSkin = _availableSkins.FirstOrDefault(x => x.Name == (_settings.Skin ?? "light"))!;
         }
 
         #region Language
@@ -55,8 +57,13 @@ namespace Services
 
         public void ChangeSkin(string skin)
         {
-            _settings.Skin = skin;
-            OnSkinChanged?.Invoke();
+            var newSkin = _availableSkins.FirstOrDefault(x => x.Name == skin);
+            if (newSkin != null && newSkin != _currentSkin)
+            {
+                _settings.Skin = skin;
+                _currentSkin = newSkin;
+                OnSkinChanged?.Invoke();
+            }
         }
         #endregion Skin
     }

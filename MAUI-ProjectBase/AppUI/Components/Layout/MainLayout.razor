@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<link rel="stylesheet" href="css/@(_appSettings.Skin).css" />
+<link rel="stylesheet" href="css/Skins/@(_appSettings.Skin).css" />
 
 <div class="page">
     <div class="sidebar">
@@ -9,23 +9,44 @@
 
     <main>
         <div class="top-row px-4">
-            <select class="form-control" @onchange="@(async (e) => _settingsService.ChangeSkin(e.Value.ToString()))">
-                @foreach (AppSkinModel skin in availableSkins)
+            <div class="custom_dropdown-container">
+                <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("skin")'>
+                    <img src="assets/images/skins/@(_settingsService._currentSkin.Icon)" class="skin-icon" />
+                    @(_settingsService._currentSkin.Name)
+                </button>
+
+                @if (isSkinDropdownOpen)
                 {
-                    <option value="@skin.Name" selected="@(_appSettings.Skin == skin.Name)">
-                        @skin.Name
-                    </option>
+                    <ul class="custom_dropdown-menu">
+                        @foreach (var skin in availableSkins)
+                        {
+                            <li @onclick='() => ChangeDropdownSelectedValue("skin",skin.Name)'>
+                                <img src="assets/images/skins/@skin.Icon" class="skin-icon" />
+                                @skin.Name
+                            </li>
+                        }
+                    </ul>
                 }
-            </select>
-            <img src="assets/images/language/@(_settingsService._currentLanguage.LanguageFlag)" />
-            <select class="form-control" @onchange="@(async (e) => _settingsService.ChangeLanguage(e.Value.ToString()))">
-                @foreach (AppLanguageModel language in availableLanguages)
+            </div>
+            <div class="custom_dropdown-container">
+                <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("language")'>
+                    <img src="assets/images/languages/@(_settingsService._currentLanguage.LanguageFlag)" class="skin-icon" />
+                    @(_settingsService._currentLanguage.LanguageCode)
+                </button>
+
+                @if (isLanguageDropdownOpen)
                 {
-                    <option value="@language.LanguageCode" selected="@(_settingsService._currentLanguage.LanguageCode == language.LanguageCode)">
-                        @language.LanguageCode
-                    </option>
+                    <ul class="custom_dropdown-menu">
+                        @foreach (var language in availableLanguages)
+                        {
+                            <li @onclick='() => ChangeDropdownSelectedValue("language", language.LanguageCode)'>
+                                <img src="assets/images/languages/@language.LanguageFlag" class="skin-icon" />
+                                @language.LanguageCode
+                            </li>
+                        }
+                    </ul>
                 }
-            </select>
+            </div>
             <button @onclick="@(async () => await LogOut())" class="btn">Disconnect</button>
         </div>
 
@@ -40,6 +61,45 @@
 @code {
     private List<AppLanguageModel> availableLanguages => _settingsService.AvailableLanguages();
     private List<AppSkinModel> availableSkins => _settingsService.AvailableSkins();
+    private bool isLanguageDropdownOpen = false;
+    private bool isSkinDropdownOpen = false;
+
+    private void ToggleDropdown(string ID)
+    {
+        switch (ID.ToLower().Trim())
+        {
+            case "skin":
+                isSkinDropdownOpen = !isSkinDropdownOpen;
+                break;
+
+            case "language":
+                isLanguageDropdownOpen = !isLanguageDropdownOpen;
+                break;
+
+            default:
+                break;
+        }
+
+        UpdateUI();
+    }
+    private void ChangeDropdownSelectedValue(string DropdownID, string newValue)
+    {
+        switch (DropdownID.ToLower().Trim())
+        {
+            case "skin":
+                _settingsService.ChangeSkin(newValue);
+                break;
+
+            case "language":
+                _settingsService.ChangeLanguage(newValue);
+                break;
+
+            default:
+                break;
+        }
+
+        ToggleDropdown(DropdownID);
+    }
 
     private async Task LogOut()
     {
@@ -57,7 +117,14 @@
     {
         if (firstRender)
         {
-            await _jsRuntime.InvokeVoidAsync("preventF5");
+            try
+            {
+                await _jsRuntime.InvokeVoidAsync("preventF5");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 

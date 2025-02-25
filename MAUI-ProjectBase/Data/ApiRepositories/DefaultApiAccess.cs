@@ -46,7 +46,7 @@ namespace Data.ApiRepositories
                 }
                 if (ApiRequest.Authentication != null)
                 {
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(ApiRequest.Authentication.Type, ApiRequest.Authentication.Value);
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(ApiRequest.Authentication.Type, ApiRequest.Authentication.Authorization);
                 }
                 if (ApiRequest.Headers != null && ApiRequest.Headers.Any())
                 {
