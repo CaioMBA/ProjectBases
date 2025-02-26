@@ -34,6 +34,8 @@
 
     private async Task HandleLogin()
     {
+        _settingsService.AddLog($"AttemptLogin by: {loginModel.Email}");
+        var x = _settingsService.logEntities();
         var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(new UserSessionModel()
             {

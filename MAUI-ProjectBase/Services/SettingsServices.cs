@@ -1,6 +1,9 @@
-﻿using Domain.Models.ApplicationConfigurationModels;
+﻿using Data.DatabaseRepositories.EntityFrameworkContexts;
 using Domain;
+using Domain.Entities;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
+using Domain.Models.ApplicationConfigurationModels;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 namespace Services
@@ -18,17 +21,34 @@ namespace Services
         public AppLanguageModel _currentLanguage { get; private set; }
         public AppSkinModel _currentSkin { get; private set; }
 
+        private readonly IDbContextFactory<AppDbContext> _dbFactory;
+
         public SettingsServices(AppUtils utils,
                                 List<AppLanguageModel> availableLanguages,
                                 List<AppSkinModel> availableSkins,
+                                IDbContextFactory<AppDbContext> dbFactory,
                                 AppSettingsModel settings)
         {
             _settings = settings;
             _utils = utils;
             _availableLanguages = availableLanguages;
             _availableSkins = availableSkins;
+            _dbFactory = dbFactory;
             _currentLanguage = GetStartLanguage();
             _currentSkin = GetStartSkin();
+        }
+
+        public void AddLog(string log)
+        {
+            using var context = _dbFactory.CreateDbContext();
+            context.Logs.Add(new LogEntity { Message = log });
+            context.SaveChanges();
+        }
+        public List<LogEntity> logEntities()
+        {
+            using var context = _dbFactory.CreateDbContext();
+            var logs = context.Logs.ToList();
+            return logs;
         }
 
         #region Language

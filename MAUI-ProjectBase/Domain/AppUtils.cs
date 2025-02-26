@@ -44,6 +44,11 @@ namespace Domain
             return Conection;
         }
 
+        public string GetSystemFilePath()
+        {
+            return FileSystem.AppDataDirectory;
+        }
+
         public string GetSystemTheme()
         {
             return AppInfo.Current.RequestedTheme switch

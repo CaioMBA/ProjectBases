@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Data.ApiRepositories;
 using Data.DatabaseRepositories;
+using Data.DatabaseRepositories.EntityFrameworkContexts;
 using Domain;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Org.BouncyCastle.Tls;
 using Services;
 using Services.AuthenticationServices;
 
@@ -21,10 +23,11 @@ namespace CrossCutting
             serviceCollection.AddSingleton(appSettings);
             serviceCollection.AddSingleton(availableLanguages);
             serviceCollection.AddSingleton(availableSkins);
+            ConfigureDependenciesExtras(serviceCollection);
             ConfigureAutoMapper(serviceCollection);
             ConfigureDependenciesService(serviceCollection);
             ConfigureDependenciesRepository(serviceCollection);
-            ConfigureDependenciesExtras(serviceCollection);
+            ConfigureDependenciesStartup(serviceCollection);
         }
 
         public static void ConfigureAutoMapper(IServiceCollection serviceCollection)
@@ -46,7 +49,7 @@ namespace CrossCutting
         public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
         {
             #region DataBase
-            serviceCollection.AddTransient<DefaultDatabaseAccess>();
+            serviceCollection.AddDbContextFactory<AppDbContext>();
             #endregion
 
             #region API
@@ -57,6 +60,11 @@ namespace CrossCutting
         public static void ConfigureDependenciesExtras(IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<AppUtils>();
+
+        }
+
+        public static void ConfigureDependenciesStartup(IServiceCollection serviceCollection)
+        {
             #region Authentication
             serviceCollection.AddScoped<IAccountServices, AccountServices>();
             serviceCollection.AddSingleton<AuthenticationStateProvider, CustomAuthenticationStateProvider>();

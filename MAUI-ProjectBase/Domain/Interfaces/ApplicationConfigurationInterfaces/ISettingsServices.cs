@@ -1,8 +1,12 @@
-﻿using Domain.Models.ApplicationConfigurationModels;
+﻿using Domain.Entities;
+using Domain.Models.ApplicationConfigurationModels;
 namespace Domain.Interfaces.ApplicationConfigurationInterfaces
 {
     public interface ISettingsServices
     {
+        void AddLog(string log);
+        List<LogEntity> logEntities();
+
         AppLanguageModel _currentLanguage { get; }
         event Action? OnLanguageChanged;
         List<AppLanguageModel> AvailableLanguages();
