@@ -1,5 +1,6 @@
 ﻿using AdoNetCore.AseClient;
 using Dapper;
+using Dapper.Contrib.Extensions;
 using Domain.Models.ApplicationConfigurationModels;
 using FirebirdSql.Data.FirebirdClient;
 using Microsoft.Data.SqlClient;
@@ -134,6 +135,39 @@ namespace Data.DatabaseRepositories
                     Console.WriteLine($"Error: {ex.Message}");
                     return default;
                 }
+            }
+        }
+
+        public async Task<T> Read<T>(object Id, DataBaseConnectionModel connection) where T : class
+        {
+            using (var _DBConnection = conectar(connection))
+            {
+                return await _DBConnection.GetAsync<T>(Id);
+            }
+
+        }
+
+        public async Task<bool> Update<T>(T Obj, DataBaseConnectionModel connection) where T : class
+        {
+            using (var _DBConnection = conectar(connection))
+            {
+                return await _DBConnection.UpdateAsync<T>(Obj);
+            }
+        }
+
+        public async Task<object> Insert<T>(T Obj, DataBaseConnectionModel connection) where T : class
+        {
+            using (var _DBConnection = conectar(connection))
+            {
+                return await _DBConnection.InsertAsync(Obj);
+            }
+        }
+
+        public async Task<bool> Delete<T>(T Obj, DataBaseConnectionModel connection) where T : class
+        {
+            using (var _DBConnection = conectar(connection))
+            {
+                return await _DBConnection.DeleteAsync(Obj);
             }
         }
         #endregion BaseMethods
