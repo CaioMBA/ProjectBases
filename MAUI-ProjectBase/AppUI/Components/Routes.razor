@@ -21,9 +21,6 @@
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-        @if (_navigation is not null)
-        {
-            _navigation.NavigateTo("/not-found");
-        }
+        <PageNotFound />
     </NotFound>
 </Router>

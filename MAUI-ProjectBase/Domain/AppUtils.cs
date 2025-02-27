@@ -94,5 +94,15 @@ namespace Domain
         {
             SecureStorage.Default.Remove(Enum.ToString());
         }
+
+        public void ClearSecurityStorage()
+        {
+            SecureStorage.Default.RemoveAll();
+        }
+
+        public void OpenUrl(string Url)
+        {
+            Launcher.OpenAsync(new Uri(Url));
+        }
     }
 }

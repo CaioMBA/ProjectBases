@@ -7,6 +7,7 @@
         public string? Email { get; set; }
         public string? Token { get; set; }
         public string? Language { get; set; }
+        public string? Theme { get; set; }
         public List<string>? Roles { get; set; }
     }
 }

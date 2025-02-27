@@ -8,12 +8,14 @@ namespace Services.AuthenticationServices
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IAccountServices _accountServices;
+        private readonly ISettingsServices _settingsServices;
         private readonly ClaimsPrincipal _anonymous;
 
-        public CustomAuthenticationStateProvider(IAccountServices accountServices)
+        public CustomAuthenticationStateProvider(IAccountServices accountServices, ISettingsServices settingsServices)
         {
-            _accountServices = accountServices;
             _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+            _accountServices = accountServices;
+            _settingsServices = settingsServices;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -41,6 +43,14 @@ namespace Services.AuthenticationServices
                     await _accountServices.SetUserSession(userSession);
                 }
                 claimsPrincipal = GetClaimsPrincipal(userSession);
+                if (!String.IsNullOrEmpty(userSession.Language))
+                {
+                    _settingsServices.ChangeLanguage(userSession.Language);
+                }
+                if (!String.IsNullOrEmpty(userSession.Theme))
+                {
+                    _settingsServices.ChangeSkin(userSession.Theme);
+                }
             }
             else
             {

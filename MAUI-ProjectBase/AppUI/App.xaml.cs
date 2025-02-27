@@ -22,6 +22,12 @@ namespace AppUI
         }
         protected override void OnStart()
         {
+            _dbContext.Database.EnsureCreated();
+            #region IF-DEBUG
+#if DEBUG
+            _dbContext.Database.EnsureDeleted();
+#endif
+            #endregion
             _dbContext.Database.Migrate();
         }
     }
