@@ -83,7 +83,7 @@ namespace AppUI
                                                                 {
                                                                     string fileName = Path.GetFileNameWithoutExtension(file).ToLower();
                                                                     languageModel.LanguageCode = fileName;
-                                                                    languageModel.LanguageFlag = $"{fileName}.png";
+                                                                    languageModel.LanguageFlag = $"{fileName}.svg";
                                                                     return languageModel;
                                                                 }
                                                                 return null;

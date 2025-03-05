@@ -12,7 +12,7 @@
         <div class="top-row px-4">
             <div class="custom_dropdown-container">
                 <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("skin")'>
-                    <img src="assets/images/skins/@(_settingsService._currentSkin.Icon)" class="skin-icon" />
+                    <img src="assets/images/skins/@(_settingsService._currentSkin.Icon)" />
                     @(_settingsService._currentSkin.Name)
                 </button>
 
@@ -21,9 +21,9 @@
                     <ul class="custom_dropdown-menu">
                         @foreach (var skin in availableSkins)
                         {
-                            <li @onclick='() => ChangeDropdownSelectedValue("skin",skin.Name)'>
-                                <img src="assets/images/skins/@skin.Icon" class="skin-icon" />
-                                @skin.Name
+                            <li @onclick='() => ChangeDropdownSelectedValue("skin", skin.Name)'>
+                                <img src="assets/images/skins/@skin.Icon" />
+                                <span>@skin.Name</span>
                             </li>
                         }
                     </ul>
@@ -31,7 +31,7 @@
             </div>
             <div class="custom_dropdown-container">
                 <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("language")'>
-                    <img src="assets/images/languages/@(_settingsService._currentLanguage.LanguageFlag)" class="skin-icon" />
+                    <img src="assets/images/languages/@(_settingsService._currentLanguage.LanguageFlag)" />
                     @(_settingsService._currentLanguage.LanguageName)
                 </button>
 
@@ -41,8 +41,8 @@
                         @foreach (var language in availableLanguages)
                         {
                             <li @onclick='() => ChangeDropdownSelectedValue("language", language.LanguageCode)'>
-                                <img src="assets/images/languages/@language.LanguageFlag" class="skin-icon" />
-                                @language.LanguageName
+                                <img src="assets/images/languages/@language.LanguageFlag" />
+                                <span>@language.LanguageName</span>
                             </li>
                         }
                     </ul>

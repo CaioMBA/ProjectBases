@@ -24,7 +24,6 @@ main {
 
     .top-row img {
         max-width: 30px;
-        border-radius: 5px;
     }
 
     .top-row ::deep a, .top-row ::deep .btn-link {
@@ -56,11 +55,13 @@ main {
     cursor: pointer;
     border-radius: 4px;
     position: relative;
+    width: max-content;
 }
 
     .custom_dropdown-btn img {
         max-width: 24px;
-        margin-right: 5px;
+        margin-right: 8px;
+        border-radius: 2px;
     }
 
 .custom_dropdown-menu {
@@ -79,12 +80,6 @@ main {
     z-index: 1000;
 }
 
-    .custom_dropdown-menu img {
-        width: 24px;
-        height: 16px;
-        margin-right: 8px;
-    }
-
     .custom_dropdown-menu li {
         display: flex;
         align-items: center;
@@ -92,10 +87,22 @@ main {
         cursor: pointer;
         transition: background 0.2s;
         white-space: nowrap;
-        max-width: 32px;
     }
 
-        .custom_dropdown-menu li:hover {
+        .custom_dropdown-menu li img {
+            max-width: 20px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .custom_dropdown-menu li span {
+            color: black;
+            transition: all ease 0.3s;
+        }
+
+        .custom_dropdown-menu li:hover,
+        .custom_dropdown-menu li:hover span {
+            color: darkblue;
             background: #f0f0f0;
         }
 
