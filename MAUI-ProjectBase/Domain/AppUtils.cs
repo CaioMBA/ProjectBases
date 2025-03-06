@@ -129,6 +129,16 @@ namespace Domain
             }
         }
 
+        public void RemoveFromPreferences(PreferenceVariablesEnum Enum)
+        {
+            Preferences.Remove(Enum.ToString());
+        }
+
+        public void ClearPreferences()
+        {
+            Preferences.Clear();
+        }
+
         public void OpenUrl(string Url)
         {
             Launcher.OpenAsync(new Uri(Url));
