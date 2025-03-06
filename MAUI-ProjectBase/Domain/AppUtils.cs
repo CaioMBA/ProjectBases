@@ -63,7 +63,7 @@ namespace Domain
         public async Task<string?> GetFromSecurityStorage(SecurityStorageVariablesEnum Enum)
         {
             var cryptedValue = await SecureStorage.Default.GetAsync(Enum.ToString());
-            if (cryptedValue == null)
+            if (String.IsNullOrEmpty(cryptedValue))
             {
                 return null;
             }
@@ -98,6 +98,35 @@ namespace Domain
         public void ClearSecurityStorage()
         {
             SecureStorage.Default.RemoveAll();
+        }
+
+        public void SetToPreferences(PreferenceVariablesEnum Enum, string Value)
+        {
+            string cryptedValue = Value.Encrypt();
+            Preferences.Set(Enum.ToString(), cryptedValue);
+        }
+
+        public string? GetFromPreferences(PreferenceVariablesEnum Enum)
+        {
+            var cryptedValue = Preferences.Get(Enum.ToString(), null);
+            if (String.IsNullOrEmpty(cryptedValue))
+            {
+                return null;
+            }
+            try
+            {
+                return cryptedValue.Decrypt();
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine($"Error decoding Base64: {ex.Message}");
+                return null;
+            }
+            catch (CryptographicException ex)
+            {
+                Console.WriteLine($"Error during decryption: {ex.Message}");
+                return null;
+            }
         }
 
         public void OpenUrl(string Url)
