@@ -1,4 +1,5 @@
-﻿using CrossCutting;
+﻿using CommunityToolkit.Maui;
+using CrossCutting;
 using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
@@ -13,6 +14,7 @@ namespace AppUI
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -47,11 +49,11 @@ namespace AppUI
         private static void ConfigureMauiPlatformDependencies(IServiceCollection serviceCollection)
         {
 #if ANDROID
-            serviceCollection.AddSingleton<IAssetServices, AppUI.Platforms.Android.AssetService>();
+            serviceCollection.AddSingleton<IPlatformSpecificServices, AppUI.Platforms.Android.PlatformSpecificServices>();
 #elif IOS
-            serviceCollection.AddSingleton<IAssetServices, AppUI.Platforms.iOS.AssetService>();
+            serviceCollection.AddSingleton<IPlatformSpecificServices, AppUI.Platforms.iOS.PlatformSpecificServices>();
 #elif WINDOWS
-            serviceCollection.AddSingleton<IAssetServices, AppUI.Platforms.Windows.AssetService>();
+            serviceCollection.AddSingleton<IPlatformSpecificServices, AppUI.Platforms.Windows.PlatformSpecificServices>();
 #endif
         }
 
@@ -67,7 +69,7 @@ namespace AppUI
 
         private static async Task<List<AppLanguageModel>> LoadAvailableLanguages(IServiceCollection serviceCollection)
         {
-            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IAssetServices>();
+            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IPlatformSpecificServices>();
 
             IEnumerable<string> assets = await assetService.ListAssetsAsync();
             IEnumerable<string> languageAssets = assets.Where(x => x.ToLower().Trim().StartsWith(@"language")
@@ -94,7 +96,7 @@ namespace AppUI
 
         private static async Task<List<AppSkinModel>> LoadAvailableSkins(IServiceCollection serviceCollection)
         {
-            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IAssetServices>();
+            var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IPlatformSpecificServices>();
 
             IEnumerable<string> assets = await assetService.ListAssetsAsync();
             List<AppSkinModel> skins = assets.Where(x =>

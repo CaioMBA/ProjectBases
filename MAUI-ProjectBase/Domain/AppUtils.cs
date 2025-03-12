@@ -1,5 +1,6 @@
 ﻿using Domain.Enums;
 using Domain.Extensions;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using System.Security.Cryptography;
 
@@ -8,9 +9,11 @@ namespace Domain
     public class AppUtils
     {
         private readonly AppSettingsModel _appSettings;
-        public AppUtils(AppSettingsModel appSettings)
+        private readonly IPlatformSpecificServices _platformService;
+        public AppUtils(AppSettingsModel appSettings, IPlatformSpecificServices platformService)
         {
             _appSettings = appSettings;
+            _platformService = platformService;
         }
 
         public AppSettingsModel GetSettings()
@@ -142,6 +145,25 @@ namespace Domain
         public void OpenUrl(string Url)
         {
             Launcher.OpenAsync(new Uri(Url));
+        }
+
+        public async Task<FileResult?> PickFileResult()
+        {
+            var options = new PickOptions
+            {
+                PickerTitle = "Please select a file",
+            };
+            return await FilePicker.PickAsync(options);
+        }
+
+        public async Task<string?> PickDirectory()
+        {
+            return await _platformService.PickDirectory();
+        }
+
+        public async Task OpenDirectory(string folderPath)
+        {
+            await _platformService.OpenDirectory(folderPath);
         }
     }
 }

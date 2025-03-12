@@ -1,11 +1,15 @@
-﻿using Domain.Interfaces.ApplicationConfigurationInterfaces;
+﻿using CommunityToolkit.Maui.Storage;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Foundation;
+using MobileCoreServices;
+using UIKit;
 
-[assembly: Dependency(typeof(AppUI.Platforms.iOS.AssetService))]
+[assembly: Dependency(typeof(AppUI.Platforms.iOS.PlatformSpecificServices))]
 namespace AppUI.Platforms.iOS
 {
-    public class AssetService : IAssetServices
+    public class PlatformSpecificServices : IPlatformSpecificServices
     {
+        #region Assets
         public string ReadAssetContent(string path)
         {
             string content = string.Empty;
@@ -60,5 +64,49 @@ namespace AppUI.Platforms.iOS
                 Console.WriteLine($"Error on AppUI.Platforms.iOS > GetFilesRecursive. Error: {ex.Message}");
             }
         }
+        #endregion
+
+        #region Picker
+        public async Task<string?> PickDirectory()
+        {
+            try
+            {
+                FolderPickerResult? folder = await FolderPicker.PickAsync(default);
+                if (folder == null)
+                {
+                    return null;
+                }
+                if (folder.IsSuccessful)
+                {
+                    return folder.Folder.Path;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error on AppUI.Platforms.iOS > PickDirectory. Error: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task OpenDirectory(string folderPath)
+        {
+            try
+            {
+                Console.WriteLine($"IOS DOESN'T ALLOW TO OPEN SPECIFIC FOLDER IN FILES APP");
+                var picker = new UIDocumentPickerViewController(new string[] { UTType.Folder }, UIDocumentPickerMode.Open);
+                picker.WasCancelled += (sender, e) => { Console.WriteLine("User canceled folder selection"); };
+
+                var window = UIApplication.SharedApplication.KeyWindow;
+                var viewController = window.RootViewController;
+                viewController.PresentViewController(picker, true, null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error on AppUI.Platforms.iOS > OpenDirectory. Error: {ex.Message}");
+            }
+        }
+        #endregion
     }
 }

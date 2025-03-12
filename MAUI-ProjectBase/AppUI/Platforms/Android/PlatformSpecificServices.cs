@@ -1,11 +1,14 @@
-﻿using Android.Content.Res;
+﻿using Android.Content;
+using Android.Content.Res;
+using CommunityToolkit.Maui.Storage;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 
-[assembly: Dependency(typeof(AppUI.Platforms.Android.AssetService))]
+[assembly: Dependency(typeof(AppUI.Platforms.Android.PlatformSpecificServices))]
 namespace AppUI.Platforms.Android
 {
-    public class AssetService : IAssetServices
+    public class PlatformSpecificServices : IPlatformSpecificServices
     {
+        #region Assets
         public string ReadAssetContent(string path)
         {
             string content = string.Empty;
@@ -61,5 +64,50 @@ namespace AppUI.Platforms.Android
                 Console.WriteLine($"Error on AppUI.Platforms.Android > ListAssetsRecursive. Error: {ex.Message}");
             }
         }
+        #endregion
+
+        #region Picker
+        public async Task<string?> PickDirectory()
+        {
+            try
+            {
+                FolderPickerResult? folder = await FolderPicker.PickAsync(default);
+                if (folder == null)
+                {
+                    return null;
+                }
+                if (folder.IsSuccessful)
+                {
+                    return folder.Folder.Path;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error on AppUI.Platforms.Android > PickDirectory. Error: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task OpenDirectory(string folderPath)
+        {
+            try
+            {
+                var file = new Java.IO.File(folderPath);
+                var uri = FileProvider.GetUriForFile(Platform.CurrentActivity, $"{Platform.CurrentActivity.PackageName}.fileprovider", file);
+
+                var intent = new Intent(Intent.ActionView);
+                intent.SetDataAndType(uri, "*/*");
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.GrantReadUriPermission);
+
+                Platform.CurrentActivity.StartActivity(intent);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error on AppUI.Platforms.Android > OpenDirectory. Error: {ex.Message}");
+            }
+        }
+        #endregion
     }
 }
