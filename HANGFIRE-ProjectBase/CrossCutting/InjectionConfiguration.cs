@@ -70,7 +70,9 @@ namespace CrossCutting
             {
                 config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                           .UseSimpleAssemblyNameTypeSerializer()
-                          .UseRecommendedSerializerSettings();
+                          .UseRecommendedSerializerSettings()
+                          .UseConsole();
+
                 switch (hangfireDatabase.Type.ToUpper())
                 {
                     case "SQLSERVER":
@@ -94,7 +96,6 @@ namespace CrossCutting
                         config.UseMemoryStorage();
                         break;
                 }
-                config.UseConsole();
             });
 
 
