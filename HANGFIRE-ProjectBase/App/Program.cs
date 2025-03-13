@@ -44,7 +44,7 @@ app.UseCors(opt => opt.AllowAnyOrigin()
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    DashboardTitle = $"{appSettings.AppName} - {appSettings.AppVersion}",
+    DashboardTitle = $"{appSettings.AppName} v{appSettings.AppVersion}",
     StatsPollingInterval = 1000,
     Authorization = new[]
     {
