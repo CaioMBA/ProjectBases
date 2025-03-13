@@ -12,6 +12,7 @@
     }
     public class HangFireSettingsModel
     {
+        public string? Identifier { get; set; }
         public int WorkerCount { get; set; }
         public HangFireSettingsAuthorizationModel? AuthorizationCredential { get; set; }
     }

@@ -101,7 +101,7 @@ namespace CrossCutting
 
             serviceCollection.AddHangfireServer(options =>
             {
-                options.ServerName = $"{utils.GetMachineName()} - {utils.GetMachineHostName}";
+                options.ServerName = $"{utils.GetMachineName()} - {appSettings.Hangfire?.Identifier ?? utils.GetMachineHostName()}";
                 options.WorkerCount = appSettings.Hangfire?.WorkerCount ?? 1;
             });
 
