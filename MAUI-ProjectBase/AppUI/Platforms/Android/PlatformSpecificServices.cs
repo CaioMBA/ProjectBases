@@ -2,6 +2,8 @@
 using Android.Content.Res;
 using CommunityToolkit.Maui.Storage;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.AndroidOption;
 
 [assembly: Dependency(typeof(AppUI.Platforms.Android.PlatformSpecificServices))]
 namespace AppUI.Platforms.Android
@@ -109,5 +111,28 @@ namespace AppUI.Platforms.Android
             }
         }
         #endregion
+
+        public async Task SendLocalNotification(string title, string message, double NotifyTime = 1)
+        {
+            var notification = new NotificationRequest
+            {
+                NotificationId = new Random().Next(int.MinValue, int.MaxValue),
+                Title = title,
+                Description = message,
+                Schedule = new NotificationRequestSchedule
+                {
+                    NotifyTime = DateTime.Now.AddSeconds(NotifyTime)
+                },
+                Android = new AndroidOptions
+                {
+                    ChannelId = "default",
+                    Priority = AndroidPriority.High,
+                    AutoCancel = true,
+                    Ongoing = false
+                }
+            };
+
+            await LocalNotificationCenter.Current.Show(notification);
+        }
     }
 }

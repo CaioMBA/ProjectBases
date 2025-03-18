@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using Windows.ApplicationModel;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Alerts;
 
 [assembly: Dependency(typeof(AppUI.Platforms.Windows.PlatformSpecificServices))]
 namespace AppUI.Platforms.Windows
@@ -121,6 +123,21 @@ namespace AppUI.Platforms.Windows
             {
                 Console.WriteLine($"Error on AppUI.Platforms.Windows > OpenDirectory. Error: {ex.Message}");
             }
+        }
+        #endregion
+
+        #region Local Notifications
+        public async Task SendLocalNotification(string title, string message, double NotifyTime = 1)
+        {
+            var duration = NotifyTime <= 5 ? ToastDuration.Short : ToastDuration.Long;
+            var msg = $"{title}: {message}";
+            if (String.IsNullOrEmpty(title))
+            {
+                msg = message;
+            }
+
+            var toast = Toast.Make(msg, duration);
+            await toast.Show();
         }
         #endregion
     }

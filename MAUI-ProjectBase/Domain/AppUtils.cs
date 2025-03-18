@@ -165,5 +165,10 @@ namespace Domain
         {
             await _platformService.OpenDirectory(folderPath);
         }
+
+        public async Task SendLocalNotification(string title, string message)
+        {
+            _platformService.SendLocalNotification(title, message);
+        }
     }
 }

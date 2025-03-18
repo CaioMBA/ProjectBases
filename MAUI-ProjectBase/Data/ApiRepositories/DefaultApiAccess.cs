@@ -21,7 +21,7 @@ namespace Data.ApiRepositories
                     "OPTIONS" => HttpMethod.Options,
                     "TRACE" => HttpMethod.Trace,
                     "PATCH" => HttpMethod.Patch,
-                    _ => throw new Exception("Nenhum Método Aceito"),
+                    _ => throw new InvalidOperationException("Nenhum Método Aceito"),
                 };
 
                 var uriBuilder = new UriBuilder(ApiRequest.Url);

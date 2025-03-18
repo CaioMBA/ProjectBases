@@ -1,19 +1,17 @@
 ﻿using AutoMapper;
 using Data.ApiRepositories;
-using Data.DatabaseRepositories;
 using Data.DatabaseRepositories.EntityFrameworkContexts;
 using Domain;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Org.BouncyCastle.Tls;
 using Services;
 using Services.AuthenticationServices;
 
 namespace CrossCutting
 {
-    public class InjectionConfiguration
+    public static class InjectionConfiguration
     {
         public static void ConfigureDependencies(IServiceCollection serviceCollection,
                                                  AppSettingsModel appSettings,

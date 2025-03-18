@@ -4,6 +4,7 @@ using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 
 namespace AppUI
 {
@@ -15,6 +16,7 @@ namespace AppUI
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .UseLocalNotification()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

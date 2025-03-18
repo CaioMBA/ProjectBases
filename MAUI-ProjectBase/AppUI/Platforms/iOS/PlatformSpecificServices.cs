@@ -2,6 +2,8 @@
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Foundation;
 using MobileCoreServices;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.iOSOption;
 using UIKit;
 
 [assembly: Dependency(typeof(AppUI.Platforms.iOS.PlatformSpecificServices))]
@@ -108,5 +110,27 @@ namespace AppUI.Platforms.iOS
             }
         }
         #endregion
+        public async Task SendLocalNotification(string title, string message, double NotifyTime = 1)
+        {
+            var notification = new NotificationRequest
+            {
+                NotificationId = new Random().Next(int.MinValue, int.MaxValue),
+                Title = title,
+                Description = message,
+                Schedule = new NotificationRequestSchedule
+                {
+                    NotifyTime = DateTime.Now.AddSeconds(NotifyTime)
+                },
+                iOS = new iOSOptions
+                {
+                    Priority = iOSPriority.Critical,
+                    ApplyBadgeValue = true,
+                    PresentAsBanner = true,
+                    ShowInNotificationCenter = true
+                }
+            };
+
+            await LocalNotificationCenter.Current.Show(notification);
+        }
     }
 }
