@@ -27,7 +27,7 @@
 
     public class ApiEndPointConnectionModel
     {
-        public required string ApiEndPointID { get; set; }
+        public required string EndPointID { get; set; }
         public required string Path { get; set; }
         public required string Method { get; set; }
         public required string Type { get; set; }
