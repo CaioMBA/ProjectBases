@@ -55,18 +55,18 @@ app.UseCors(opt => opt.AllowAnyOrigin()
 app.UseHttpsRedirection();
 
 #region Health Checks
-app.MapHealthChecks("health", new HealthCheckOptions()
+app.MapHealthChecks(Environment.GetEnvironmentVariable("HEALTHCHECK_PATH") ?? "/health", new HealthCheckOptions()
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
 });
 
-app.MapHealthChecks("live", new HealthCheckOptions
+app.MapHealthChecks("/live", new HealthCheckOptions
 {
     Predicate = r => r.Tags.Contains("api"),
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.MapHealthChecks("ready", new HealthCheckOptions
+app.MapHealthChecks("/ready", new HealthCheckOptions
 {
     Predicate = r => r.Tags.Contains("db"),
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse

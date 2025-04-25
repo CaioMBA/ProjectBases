@@ -6,7 +6,7 @@ using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Mappings;
 using Domain.Models.ApplicationConfigurationModels;
-using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -67,6 +67,7 @@ namespace CrossCutting
 
         public static void ConfigureDependenciesExtras(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddMemoryCache();
             serviceCollection.AddSingleton<Utils>();
         }
@@ -118,8 +119,8 @@ namespace CrossCutting
 
             foreach (var api in settings.ApiConnections ?? new())
             {
-                var baseUrl = new Uri(api.Url);
-                var healthUrl = new Uri(baseUrl, "health");
+                var apiUrl = new Uri(api.Url);
+                var healthUrl = new Uri(apiUrl, "health");
                 var name = $"API-{api.ApiID}";
 
                 healthChecksBuilder.AddUrlGroup(
@@ -129,16 +130,20 @@ namespace CrossCutting
                     httpMethod: HttpMethod.Get);
             }
 
-            healthChecksBuilder.AddCheck("SELF", () => HealthCheckResult.Healthy(), tags: new[] { "api", "critical" });
-            healthChecksBuilder.AddDbContextCheck<AppDbContext>("AppDbContext", tags: new[] { "db", "critical", "efcore" });
+            healthChecksBuilder.AddCheck(name: "SELF", () => HealthCheckResult.Healthy(), tags: new[] { "api", "critical" });
+            healthChecksBuilder.AddDbContextCheck<AppDbContext>(name: "AppDbContext", tags: new[] { "db", "critical", "efcore" });
+
+            bool inContainer = string.Equals(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), "true", StringComparison.OrdinalIgnoreCase);
+
+            var baseUrl = inContainer ? Environment.GetEnvironmentVariable("HEALTHCHECK_BASEURL") ?? "http://localhost:8080" : string.Empty;
 
             serviceCollection.AddHealthChecksUI(options =>
             {
                 options.SetEvaluationTimeInSeconds(10);
                 options.MaximumHistoryEntriesPerEndpoint(60);
-                options.AddHealthCheckEndpoint("Default Health Check", "/health");
-                options.AddHealthCheckEndpoint("Live Health Check", "/live");
-                options.AddHealthCheckEndpoint("Ready Health Check", "/ready");
+                options.AddHealthCheckEndpoint("Default Health Check", $"{baseUrl}{Environment.GetEnvironmentVariable("HEALTHCHECK_PATH") ?? "/health"}");
+                options.AddHealthCheckEndpoint("Live Health Check", $"{baseUrl}/live");
+                options.AddHealthCheckEndpoint("Ready Health Check", $"{baseUrl}/ready");
             }).AddInMemoryStorage();
         }
     }
