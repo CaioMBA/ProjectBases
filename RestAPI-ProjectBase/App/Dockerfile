@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0
 
 #Install Updates/Dependencies
 RUN apt-get update \
-	&& apt-get install -y jq \
+	&& apt-get install -y curl jq \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -20,7 +20,7 @@ WORKDIR /App
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
- CMD curl -fs http://localhost:8080/health | jq -r '.status' | grep -q Healthy
+ CMD sh -c 'curl -fs http://localhost:8080/health | jq -r ".status" | grep -qi "^healthy$"'
 
 # Set the entry point
 ENTRYPOINT ["dotnet", "App.dll"]
