@@ -43,5 +43,10 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"CaioMBA_ProjectBases_0f8fdfd8-7992-47a2-8f7e-e03a80174179" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
-          dotnet build
+
+          dotnet build HANGFIRE-ProjectBase/HANGFIRE-ProjectBase.sln
+          dotnet build MAUI-ProjectBase/MAUI-ProjectBase.sln
+          dotnet build MVC-ProjectBase/MVC-ProjectBase.sln
+          dotnet build RestAPI-ProjectBase/RestAPI-ProjectBase.sln
+          
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
