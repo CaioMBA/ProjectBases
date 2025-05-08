@@ -76,7 +76,7 @@ namespace Services
         [AutomaticRetry(Attempts = _maxAttempts, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
         public void RunFireAndForgetJob(PerformContext? context)
         {
-            CS_Log($"Fire-and-Forget Job Executed at {DateTime.UtcNow}", LogTypeEnum.Information, context);
+            CS_Log($"Fire-and-Forget Job Executed at {DateTime.UtcNow}", LogType.Information, context);
         }
 
         [DisplayName("RunDelayedJob")]//use brackets and their positions to show the parameters, example: {0} would be the parameter on this function [ context ] 
@@ -84,7 +84,7 @@ namespace Services
         [AutomaticRetry(Attempts = _maxAttempts, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
         public void RunDelayedJob(PerformContext? context)
         {
-            CS_Log($"Delayed Job Executed at {DateTime.UtcNow}", LogTypeEnum.Information, context);
+            CS_Log($"Delayed Job Executed at {DateTime.UtcNow}", LogType.Information, context);
         }
 
         [DisplayName("RunRecurringJob")]//use brackets and their positions to show the parameters, example: {0} would be the parameter on this function [ context ] 
@@ -92,7 +92,7 @@ namespace Services
         [AutomaticRetry(Attempts = _maxAttempts, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
         public void RunRecurringJob(PerformContext? context)
         {
-            CS_Log($"Recurring Job Executed at {DateTime.UtcNow}", LogTypeEnum.Information, context);
+            CS_Log($"Recurring Job Executed at {DateTime.UtcNow}", LogType.Information, context);
         }
     }
 }

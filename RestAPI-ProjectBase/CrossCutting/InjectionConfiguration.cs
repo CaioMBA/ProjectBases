@@ -81,7 +81,7 @@ namespace CrossCutting
         {
             var healthChecksBuilder = serviceCollection.AddHealthChecks();
 
-            foreach (var db in settings.DataBaseConnectionModels ?? new())
+            foreach (var db in settings.DataBaseConnections ?? new())
             {
                 var name = $"DB-{db.DataBaseID}";
 

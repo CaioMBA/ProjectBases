@@ -1,6 +1,5 @@
 ﻿using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
 
 namespace Domain
 {
@@ -16,12 +15,12 @@ namespace Domain
 
         public DataBaseConnectionModel GetDataBase(string DataBaseID)
         {
-            DataBaseConnectionModel? Conection = (from v in _appSettings.DataBaseConnectionModels
+            DataBaseConnectionModel? Conection = (from v in _appSettings.DataBaseConnections
                                                   where v.DataBaseID.Equals(DataBaseID, StringComparison.OrdinalIgnoreCase)
                                                   select v).FirstOrDefault();
             if (Conection == null)
             {
-                throw new InvalidOperationException($"API not found using Id: {DataBaseID}");
+                throw new InvalidOperationException($"Database not found using Id: {DataBaseID}");
             }
 
             return Conection;
@@ -44,7 +43,7 @@ namespace Domain
         {
             ApiConnectionModel? Conection = GetApi(ApiID);
             ApiEndPointConnectionModel? EndPoint = (from v in Conection.EndPoints
-                                                    where v.ApiEndPointID.Equals(ApiEndPointID, StringComparison.OrdinalIgnoreCase)
+                                                    where v.EndPointID.Equals(ApiEndPointID, StringComparison.OrdinalIgnoreCase)
                                                     select v).FirstOrDefault();
             if (EndPoint == null)
             {

@@ -4,12 +4,21 @@ using Hangfire;
 using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.AllowTrailingCommas = true;
+    options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -66,6 +75,32 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 });
 
 app.UseHttpsRedirection();
+
+#region Health Checks
+app.MapHealthChecks(Environment.GetEnvironmentVariable("HEALTHCHECK_PATH") ?? "/health", new HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+});
+
+app.MapHealthChecks("/live", new HealthCheckOptions
+{
+    Predicate = r => r.Tags.Contains("api"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.MapHealthChecks("/ready", new HealthCheckOptions
+{
+    Predicate = r => r.Tags.Contains("db"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.MapHealthChecksUI(options =>
+{
+    options.UIPath = "/health-ui";
+    options.ResourcesPath = "/health-ui-resources";
+    options.WebhookPath = "/health-api";
+});
+#endregion
 
 app.UseAuthorization();
 

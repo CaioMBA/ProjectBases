@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using Domain.Enums;
 using Domain.Models.ApplicationConfigurationModels;
 using FirebirdSql.Data.FirebirdClient;
 using Microsoft.Data.SqlClient;
@@ -23,15 +24,15 @@ namespace Data.Database
                 return _connection;
             }
 
-            _connection = bd.Type.ToUpper().Trim() switch
+            _connection = bd.Type switch
             {
-                "SQLSERVER" => new SqlConnection(bd.ConnectionString),
-                "ORACLE" => new OracleConnection(bd.ConnectionString),
-                "MYSQL" => new MySqlConnection(bd.ConnectionString),
-                "MARIADB" => new MySqlConnection(bd.ConnectionString),
-                "POSTGRESQL" => new NpgsqlConnection(bd.ConnectionString),
-                "FIREBIRD" => new FbConnection(bd.ConnectionString),
-                _ => throw new NotSupportedException($"Database type '{bd.Type}' is not supported.")
+                DataBaseType.SQLSERVER => new SqlConnection(bd.ConnectionString),
+                DataBaseType.ORACLE => new OracleConnection(bd.ConnectionString),
+                DataBaseType.MYSQL => new MySqlConnection(bd.ConnectionString),
+                DataBaseType.MARIADB => new MySqlConnection(bd.ConnectionString),
+                DataBaseType.POSTGRESQL => new NpgsqlConnection(bd.ConnectionString),
+                DataBaseType.FIREBIRD => new FbConnection(bd.ConnectionString),
+                _ => throw new NotSupportedException($"Database type '{bd.Type.ToString()}' is not supported.")
             };
 
             if (_connection.State == ConnectionState.Closed)

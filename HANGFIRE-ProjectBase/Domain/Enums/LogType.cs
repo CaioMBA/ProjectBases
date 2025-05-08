@@ -1,6 +1,6 @@
 ﻿namespace Domain.Enums
 {
-    public enum LogTypeEnum
+    public enum LogType
     {
         Success = 1,
         Warning = 2,

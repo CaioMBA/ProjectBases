@@ -6,7 +6,7 @@ namespace Domain.Models.ApplicationConfigurationModels
     {
         public string? AppName { get; set; }
         public double? AppVersion { get; set; }
-        public List<DataBaseConnectionModel>? DataBaseConnectionModels { get; set; }
+        public List<DataBaseConnectionModel>? DataBaseConnections { get; set; }
         public List<ApiConnectionModel>? ApiConnections { get; set; }
     }
 
@@ -15,7 +15,6 @@ namespace Domain.Models.ApplicationConfigurationModels
         public required string DataBaseID { get; set; }
         public required DataBaseType Type { get; set; }
         public required string ConnectionString { get; set; }
-        public string? Name { get; set; }
     }
     public record ApiConnectionModel
     {

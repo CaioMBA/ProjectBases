@@ -13,7 +13,7 @@ namespace Data.Api
         {
             using (HttpClient httpClient = new HttpClient())
             {
-                HttpMethod Method = ApiRequest.TypeRequest switch
+                HttpMethod Method = ApiRequest.Method switch
                 {
                     ApiRequestMethod.GET => HttpMethod.Get,
                     ApiRequestMethod.POST => HttpMethod.Post,
@@ -23,7 +23,7 @@ namespace Data.Api
                     ApiRequestMethod.OPTIONS => HttpMethod.Options,
                     ApiRequestMethod.TRACE => HttpMethod.Trace,
                     ApiRequestMethod.PATCH => HttpMethod.Patch,
-                    _ => throw new InvalidKeyException($"{ApiRequest.TypeRequest.ToString()} is not a valid Api Type"),
+                    _ => throw new InvalidKeyException($"{ApiRequest.Method.ToString()} is not a valid Api Type"),
                 };
 
                 var uriBuilder = new UriBuilder(ApiRequest.Url);
@@ -80,7 +80,7 @@ namespace Data.Api
             RestApiRequestModel request = new()
             {
                 Url = GraphQlRequest.Url,
-                TypeRequest = ApiRequestMethod.POST,
+                Method = ApiRequestMethod.POST,
                 Authentication = GraphQlRequest.Authentication,
                 Headers = null,
                 Body = new

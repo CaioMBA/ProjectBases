@@ -23,42 +23,42 @@ namespace Services
             _utils = utils;
         }
 
-        public void CS_Log(string message, LogTypeEnum type = LogTypeEnum.Information, PerformContext? context = null)
+        public void CS_Log(string message, LogType type = LogType.Information, PerformContext? context = null)
         {
             context?.ResetTextColor();
             switch (type)
             {
-                case LogTypeEnum.Success:
+                case LogType.Success:
                     context?.SetTextColor(ConsoleTextColor.Green);
                     _logger.LogInformation(message);
                     Trace.TraceInformation(message);
                     break;
-                case LogTypeEnum.Information:
+                case LogType.Information:
                     context?.SetTextColor(ConsoleTextColor.Cyan);
                     _logger.LogInformation(message);
                     Trace.TraceInformation(message);
                     break;
-                case LogTypeEnum.Warning:
+                case LogType.Warning:
                     context?.SetTextColor(ConsoleTextColor.Yellow);
                     _logger.LogWarning(message);
                     Trace.TraceWarning(message);
                     break;
-                case LogTypeEnum.Error:
+                case LogType.Error:
                     context?.SetTextColor(ConsoleTextColor.Red);
                     _logger.LogError(message);
                     Trace.TraceError(message);
                     break;
-                case LogTypeEnum.Critical:
+                case LogType.Critical:
                     context?.SetTextColor(ConsoleTextColor.DarkRed);
                     _logger.LogCritical(message);
                     Trace.TraceError(message);
                     break;
-                case LogTypeEnum.Debug:
+                case LogType.Debug:
                     context?.SetTextColor(ConsoleTextColor.Magenta);
                     _logger.LogDebug(message);
                     Trace.TraceInformation(message);
                     break;
-                case LogTypeEnum.Trace:
+                case LogType.Trace:
                     context?.SetTextColor(ConsoleTextColor.DarkGray);
                     _logger.LogTrace(message);
                     Trace.TraceInformation(message);
