@@ -6,7 +6,7 @@
     protected override void OnInitialized()
     {
         _settingsService.OnLanguageChanged += UpdateUI;
-        _settingsService.OnSkinChanged += UpdateUI;
+        _settingsService.OnThemeChanged += UpdateUI;
     }
 
     private async void UpdateUI()
@@ -17,6 +17,6 @@
     public void Dispose()
     {
         _settingsService.OnLanguageChanged -= UpdateUI;
-        _settingsService.OnSkinChanged -= UpdateUI;
+        _settingsService.OnThemeChanged -= UpdateUI;
     }
 }

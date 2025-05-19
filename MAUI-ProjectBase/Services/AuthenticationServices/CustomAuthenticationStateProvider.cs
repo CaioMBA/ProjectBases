@@ -8,15 +8,13 @@ namespace Services.AuthenticationServices
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IAccountServices _accountServices;
-        private readonly ISettingsServices _settingsServices;
         private readonly ClaimsPrincipal _anonymous;
         private UserSessionModel? _currentUserSession;
 
-        public CustomAuthenticationStateProvider(IAccountServices accountServices, ISettingsServices settingsServices)
+        public CustomAuthenticationStateProvider(IAccountServices accountServices)
         {
             _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
             _accountServices = accountServices;
-            _settingsServices = settingsServices;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -47,14 +45,7 @@ namespace Services.AuthenticationServices
                     await _accountServices.SetUserSession(userSession);
                 }
                 claimsPrincipal = GetClaimsPrincipal(userSession);
-                if (!String.IsNullOrEmpty(userSession.Language))
-                {
-                    _settingsServices.ChangeLanguage(userSession.Language);
-                }
-                if (!String.IsNullOrEmpty(userSession.Theme))
-                {
-                    _settingsServices.ChangeSkin(userSession.Theme);
-                }
+                _accountServices.SetUserPreferences(userSession);
             }
             else
             {
@@ -67,24 +58,6 @@ namespace Services.AuthenticationServices
         public UserSessionModel? CurrentUserSession()
         {
             return _currentUserSession;
-        }
-
-        public void UpdateUserTheme(string newTheme)
-        {
-            if (_currentUserSession is not null)
-            {
-                _currentUserSession.Theme = newTheme;
-                _settingsServices.ChangeSkin(newTheme);
-            }
-        }
-
-        public void UpdateUserLanguage(string newLanguage)
-        {
-            if (_currentUserSession is not null)
-            {
-                _currentUserSession.Language = newLanguage;
-                _settingsServices.ChangeLanguage(newLanguage);
-            }
         }
 
         private ClaimsPrincipal GetClaimsPrincipal(UserSessionModel userSession)

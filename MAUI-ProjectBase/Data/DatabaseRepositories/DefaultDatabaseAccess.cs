@@ -1,6 +1,7 @@
 ﻿using AdoNetCore.AseClient;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Domain.Enums;
 using Domain.Models.ApplicationConfigurationModels;
 using FirebirdSql.Data.FirebirdClient;
 using Microsoft.Data.SqlClient;
@@ -18,15 +19,15 @@ namespace Data.DatabaseRepositories
 
         public IDbConnection conectar(DataBaseConnectionModel bd)
         {
-            _con = bd.Type.ToUpper().Trim() switch
+            _con = bd.Type switch
             {
-                "SQLSERVER" => new SqlConnection(bd.ConnectionString),
-                "ORACLE" => new OracleConnection(bd.ConnectionString),
-                "MYSQL" => new MySqlConnection(bd.ConnectionString),
-                "MARIADB" => new MySqlConnection(bd.ConnectionString),
-                "POSTGRESQL" => new NpgsqlConnection(bd.ConnectionString),
-                "FIREBIRD" => new FbConnection(bd.ConnectionString),
-                "SYBASE" => new AseConnection(bd.ConnectionString),
+                DataBaseType.SQLSERVER => new SqlConnection(bd.ConnectionString),
+                DataBaseType.ORACLE => new OracleConnection(bd.ConnectionString),
+                DataBaseType.MYSQL => new MySqlConnection(bd.ConnectionString),
+                DataBaseType.MARIADB => new MySqlConnection(bd.ConnectionString),
+                DataBaseType.POSTGRESQL => new NpgsqlConnection(bd.ConnectionString),
+                DataBaseType.FIREBIRD => new FbConnection(bd.ConnectionString),
+                DataBaseType.SYBASE => new AseConnection(bd.ConnectionString),
                 _ => throw new NotSupportedException($"Database type '{bd.Type}' is not supported.")
             };
 

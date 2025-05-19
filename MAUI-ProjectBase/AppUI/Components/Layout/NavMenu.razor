@@ -10,7 +10,7 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> @(_settingsService._currentLanguage.sidebar_home)
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> @(_settingsService.currentLanguage.sidebar_home)
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -30,7 +30,7 @@
     protected override void OnInitialized()
     {
         _settingsService.OnLanguageChanged += UpdateUI;
-        _settingsService.OnSkinChanged += UpdateUI;
+        _settingsService.OnThemeChanged += UpdateUI;
     }
 
     private async void UpdateUI()
@@ -41,6 +41,6 @@
     public void Dispose()
     {
         _settingsService.OnLanguageChanged -= UpdateUI;
-        _settingsService.OnSkinChanged -= UpdateUI;
+        _settingsService.OnThemeChanged -= UpdateUI;
     }
 }

@@ -31,6 +31,117 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+
+/*#region ToogleSwitch*/
+input[type="checkbox"].toogle_switch {
+    vertical-align: central;
+    -webkit-appearance: none;
+    position: relative;
+    width: 50px;
+    height: 30px;
+    border-radius: 25px;
+    background-color: #ccc;
+    transition: background .3s;
+    outline: none;
+    cursor: pointer;
+}
+
+    input[type="checkbox"].toogle_switch::after {
+        vertical-align: central;
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 30%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        height: 1.25rem;
+        width: 1.25rem;
+        /*background-color: rgb(255, 255, 255);*/
+        background-color: var(--primary-color);
+        transition: all .3s;
+    }
+
+    input[type="checkbox"].toogle_switch:checked {
+        vertical-align: central;
+        background-color: var(--primary-color);
+        /*background-color: rgb(141, 221, 141);*/
+    }
+
+        input[type="checkbox"].toogle_switch:checked::after {
+            vertical-align: central;
+            left: 70%;
+            background-color: rgb(255, 255, 255);
+        }
+/*#endregion*/
+
+/*#region Custom DropDown*/
+.custom_dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.custom_dropdown-btn {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    position: relative;
+    width: max-content;
+}
+
+    .custom_dropdown-btn img {
+        max-width: 24px;
+        margin-right: 8px;
+        border-radius: 2px;
+    }
+
+.custom_dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+    width: max-content;
+    min-width: 100%;
+    border-radius: 4px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+    .custom_dropdown-menu li {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+        .custom_dropdown-menu li img {
+            max-width: 20px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .custom_dropdown-menu li span {
+            color: black;
+            transition: all ease 0.3s;
+        }
+
+        .custom_dropdown-menu li:hover,
+        .custom_dropdown-menu li:hover span {
+            color: darkblue;
+            background: #f0f0f0;
+        }
+
+/*#endregion Custom DropDown*/
+
 /*#region Loading*/
 .loading-overlay {
     display: flex;

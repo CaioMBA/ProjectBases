@@ -9,9 +9,12 @@
 @using Microsoft.JSInterop
 @using AppUI
 @using AppUI.Components
+@using Domain;
+@using Domain.Extensions;
 @using Domain.Models.ApplicationConfigurationModels;
 @using Domain.Interfaces.ApplicationConfigurationInterfaces
 @using Services.AuthenticationServices;
+@inject AppUtils _utils;
 @inject AuthenticationStateProvider _authStateProvider;
 @inject NavigationManager _navigation;
 @inject AppSettingsModel _appSettings;

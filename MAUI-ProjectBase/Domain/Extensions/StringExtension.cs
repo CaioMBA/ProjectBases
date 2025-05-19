@@ -98,5 +98,25 @@ namespace Domain.Extensions
         {
             return JsonConvert.DeserializeObject<T>(str);
         }
+
+        public static AppTheme ToAppTheme(this String str)
+        {
+            if (String.IsNullOrEmpty(str))
+            {
+                return AppTheme.Unspecified;
+            }
+            else if (str.EndsWith("light", StringComparison.OrdinalIgnoreCase))
+            {
+                return AppTheme.Light;
+            }
+            else if (str.EndsWith("dark", StringComparison.OrdinalIgnoreCase))
+            {
+                return AppTheme.Dark;
+            }
+            else
+            {
+                return AppTheme.Unspecified;
+            }
+        }
     }
 }

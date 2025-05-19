@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using CrossCutting;
+using Domain;
 using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
@@ -34,7 +35,7 @@ namespace AppUI
             }
             List<AppLanguageModel> availableLanguages = LoadAvailableLanguages(builder.Services).Result;
 
-            List<AppSkinModel> availableSkins = LoadAvailableSkins(builder.Services).Result;
+            List<AppThemeModel> availableSkins = LoadAvailableSkins(builder.Services).Result;
 
             InjectionConfiguration.ConfigureDependencies(builder.Services, appSettings, availableLanguages, availableSkins);
 
@@ -61,12 +62,15 @@ namespace AppUI
 
         private static async Task<AppSettingsModel?> LoadConfigurations()
         {
-            using var stream = await FileSystem.OpenAppPackageFileAsync("appsettings.json");
-            using var reader = new StreamReader(stream);
+            using (var stream = FileSystem.OpenAppPackageFileAsync("appsettings.json").Result)
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    string content = await reader.ReadToEndAsync();
 
-            string content = reader.ReadToEnd();
-
-            return content.ToObject<AppSettingsModel>();
+                    return content.ToObject<AppSettingsModel>();
+                }
+            }
         }
 
         private static async Task<List<AppLanguageModel>> LoadAvailableLanguages(IServiceCollection serviceCollection)
@@ -74,11 +78,9 @@ namespace AppUI
             var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IPlatformSpecificServices>();
 
             IEnumerable<string> assets = await assetService.ListAssetsAsync();
-            IEnumerable<string> languageAssets = assets.Where(x => x.ToLower().Trim().StartsWith(@"language")
-                                                                   && x.ToLower().Trim().EndsWith(@".json"));
 
-            List<AppLanguageModel?> languages = assets.Where(x => x.ToLower().Trim().StartsWith("language")
-                                                                        && x.ToLower().Trim().EndsWith(".json"))
+            List<AppLanguageModel?> languages = assets.Where(x => x.Trim().StartsWith("language", StringComparison.OrdinalIgnoreCase)
+                                                                        && x.Trim().EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                                                             .Select(file =>
                                                             {
                                                                 string content = assetService.ReadAssetContent(file);
@@ -93,35 +95,37 @@ namespace AppUI
                                                                 return null;
                                                             }).ToList();
 
-            return languages.Where(x => x is not null).ToList()!;
+            return languages.Where(x => x is not null).Distinct().ToList()!;
         }
 
-        private static async Task<List<AppSkinModel>> LoadAvailableSkins(IServiceCollection serviceCollection)
+        private static async Task<List<AppThemeModel>> LoadAvailableSkins(IServiceCollection serviceCollection)
         {
             var assetService = serviceCollection.BuildServiceProvider().GetRequiredService<IPlatformSpecificServices>();
 
             IEnumerable<string> assets = await assetService.ListAssetsAsync();
-            List<AppSkinModel> skins = assets.Where(x =>
-                                                (x.ToLower().Trim().StartsWith(@"wwwroot/css/skins")
+            List<AppThemeModel> skins = assets.Where(x =>
+                                                (x.Trim().StartsWith(@"wwwroot/css/skins", StringComparison.OrdinalIgnoreCase)
                                                  ||
-                                                 x.ToLower().Trim().StartsWith(@"wwwroot\css\skins"))
-                                                && x.ToLower().Trim().EndsWith(@".css"))
+                                                 x.Trim().StartsWith(@"wwwroot\css\skins", StringComparison.OrdinalIgnoreCase))
+                                                && x.Trim().EndsWith(@".css", StringComparison.OrdinalIgnoreCase))
                                         .Select(x =>
                                         {
-                                            var name = x.ToLower()
-                                                      .Replace(@"wwwroot/css/skins/", "")
-                                                      .Replace(@"wwwroot\css\skins\", "")
-                                                      .Replace(@".css", "");
+                                            var name = x
+                                                      .Replace(@"wwwroot/css/skins/", "", StringComparison.OrdinalIgnoreCase)
+                                                      .Replace(@"wwwroot\css\skins\", "", StringComparison.OrdinalIgnoreCase)
+                                                      .Replace(@".css", "", StringComparison.OrdinalIgnoreCase);
 
-                                            return new AppSkinModel()
+                                            return new AppThemeModel()
                                             {
                                                 Name = name,
                                                 Path = x.ToLower(),
+                                                Theme = name.ToAppTheme(),
                                                 Icon = $"{name}_skin.png"
                                             };
                                         })
+                                        .Distinct()
                                         .ToList();
-            return skins;
+            return skins.Where(x => x is not null).Distinct().ToList()!;
         }
     }
 }

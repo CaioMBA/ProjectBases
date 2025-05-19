@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @using System.Globalization;
 
-<link rel="stylesheet" href="css/Skins/@(_appSettings.Skin).css" />
+<link rel="stylesheet" href="css/Skins/@(_settingsService.currentTheme.Name).css" />
 
 <div class="page">
     <div class="sidebar">
@@ -11,17 +11,17 @@
     <main>
         <div class="top-row px-4">
             <div class="custom_dropdown-container">
-                <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("skin")'>
-                    <img src="assets/images/skins/@(_settingsService._currentSkin.Icon)" />
-                    @(_settingsService._currentSkin.Name)
+                <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("theme")'>
+                    <img src="assets/images/skins/@(_settingsService.currentTheme.Icon)" />
+                    @(_settingsService.currentTheme.Name)
                 </button>
 
                 @if (isSkinDropdownOpen)
                 {
                     <ul class="custom_dropdown-menu">
-                        @foreach (var skin in availableSkins)
+                        @foreach (var skin in availableThemes)
                         {
-                            <li @onclick='() => ChangeDropdownSelectedValue("skin", skin.Name)'>
+                            <li @onclick='() => ChangeDropdownSelectedValue("theme", skin.Name)'>
                                 <img src="assets/images/skins/@skin.Icon" />
                                 <span>@skin.Name</span>
                             </li>
@@ -31,8 +31,8 @@
             </div>
             <div class="custom_dropdown-container">
                 <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("language")'>
-                    <img src="assets/images/languages/@(_settingsService._currentLanguage.LanguageFlag)" />
-                    @(_settingsService._currentLanguage.LanguageName)
+                    <img src="assets/images/languages/@(_settingsService.currentLanguage.LanguageFlag)" />
+                    @(_settingsService.currentLanguage.LanguageName)
                 </button>
 
                 @if (isLanguageDropdownOpen)
@@ -48,7 +48,7 @@
                     </ul>
                 }
             </div>
-            <button @onclick="@(async () => await LogOut())" class="btn">@(_settingsService._currentLanguage.sidebar_logout_button)</button>
+            <button @onclick="@(async () => await LogOut())" class="btn">@(_settingsService.currentLanguage.sidebar_logout_button)</button>
         </div>
 
         <article class="content px-4">
@@ -61,7 +61,7 @@
 
 @code {
     private List<AppLanguageModel> availableLanguages => _settingsService.AvailableLanguages();
-    private List<AppSkinModel> availableSkins => _settingsService.AvailableSkins();
+    private List<AppThemeModel> availableThemes => _settingsService.AvailableThemes();
     private bool isLanguageDropdownOpen = false;
     private bool isSkinDropdownOpen = false;
 
@@ -69,7 +69,7 @@
     {
         switch (ID.ToLower().Trim())
         {
-            case "skin":
+            case "theme":
                 isSkinDropdownOpen = !isSkinDropdownOpen;
                 break;
 
@@ -87,8 +87,8 @@
     {
         switch (DropdownID.ToLower().Trim())
         {
-            case "skin":
-                _settingsService.ChangeSkin(newValue);
+            case "theme":
+                _settingsService.ChangeTheme(newValue);
                 break;
 
             case "language":
@@ -111,7 +111,7 @@
     protected override void OnInitialized()
     {
         _settingsService.OnLanguageChanged += UpdateUI;
-        _settingsService.OnSkinChanged += UpdateUI;
+        _settingsService.OnThemeChanged += UpdateUI;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -137,6 +137,6 @@
     public void Dispose()
     {
         _settingsService.OnLanguageChanged -= UpdateUI;
-        _settingsService.OnSkinChanged -= UpdateUI;
+        _settingsService.OnThemeChanged -= UpdateUI;
     }
 }

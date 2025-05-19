@@ -7,5 +7,6 @@ namespace Domain.Interfaces.ApplicationConfigurationInterfaces
         Task<UserSessionModel?> GetUserSession();
         Task SetUserSession(UserSessionModel userSession);
         void RemoveUserSession();
+        void SetUserPreferences(UserSessionModel userSession);
     }
 }

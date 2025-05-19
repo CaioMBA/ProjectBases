@@ -1,6 +1,5 @@
 ﻿using Data.DatabaseRepositories.EntityFrameworkContexts;
 using Domain;
-using Domain.Entities;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.EntityFrameworkCore;
@@ -13,50 +12,35 @@ namespace Services
         private readonly AppUtils _utils;
         private readonly AppSettingsModel _settings;
         private readonly List<AppLanguageModel> _availableLanguages;
-        private readonly List<AppSkinModel> _availableSkins;
+        private readonly List<AppThemeModel> _availableThemes;
 
         public event Action? OnLanguageChanged;
-        public event Action? OnSkinChanged;
+        public event Action? OnThemeChanged;
 
-        public AppLanguageModel _currentLanguage { get; private set; }
-        public AppSkinModel _currentSkin { get; private set; }
+        public AppLanguageModel currentLanguage { get; private set; }
+        public AppThemeModel currentTheme { get; private set; }
 
-        private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
         public SettingsServices(AppUtils utils,
                                 List<AppLanguageModel> availableLanguages,
-                                List<AppSkinModel> availableSkins,
+                                List<AppThemeModel> availableThemes,
                                 IDbContextFactory<AppDbContext> dbFactory,
                                 AppSettingsModel settings)
         {
-            _settings = settings;
             _utils = utils;
+            _settings = settings;
             _availableLanguages = availableLanguages;
-            _availableSkins = availableSkins;
-            _dbFactory = dbFactory;
-            _currentLanguage = GetStartLanguage();
-            _currentSkin = GetStartSkin();
-        }
-
-        public void AddLog(string log)
-        {
-            using var context = _dbFactory.CreateDbContext();
-            context.Logs.Add(new LogEntity { Message = log });
-            context.SaveChanges();
-        }
-        public List<LogEntity> logEntities()
-        {
-            using var context = _dbFactory.CreateDbContext();
-            var logs = context.Logs.ToList();
-            return logs;
+            _availableThemes = availableThemes;
+            currentLanguage = GetStartLanguage();
+            currentTheme = GetStartTheme();
         }
 
         #region Language
         private AppLanguageModel GetStartLanguage()
         {
             return _availableLanguages.FirstOrDefault(x =>
-                    x.LanguageCode!.Equals(CultureInfo.CurrentCulture.Name ?? _settings.Language, StringComparison.OrdinalIgnoreCase)
-                ) ?? _availableLanguages.First();
+                    x.LanguageCode!.Equals(CultureInfo.CurrentCulture.Name, StringComparison.OrdinalIgnoreCase)
+                ) ?? _availableLanguages.FirstOrDefault()!;
         }
 
         public List<AppLanguageModel> AvailableLanguages()
@@ -67,10 +51,9 @@ namespace Services
         public void ChangeLanguage(string languageCode)
         {
             var newLanguage = _availableLanguages.FirstOrDefault(x => x.LanguageCode!.Equals(languageCode, StringComparison.OrdinalIgnoreCase));
-            if (newLanguage is not null && newLanguage != _currentLanguage)
+            if (newLanguage is not null && newLanguage != currentLanguage)
             {
-                _settings.Language = languageCode;
-                _currentLanguage = newLanguage;
+                currentLanguage = newLanguage;
                 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(languageCode);
                 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(languageCode);
                 OnLanguageChanged?.Invoke();
@@ -80,26 +63,25 @@ namespace Services
 
 
         #region Skin
-        private AppSkinModel GetStartSkin()
+        private AppThemeModel GetStartTheme()
         {
-            return _availableSkins.FirstOrDefault(x =>
-                            x.Name!.Equals((_utils.GetSystemTheme() ?? _settings.Skin), StringComparison.OrdinalIgnoreCase)
-                        ) ?? _availableSkins.First();
+            return _availableThemes.FirstOrDefault(x =>
+                x.Theme == _utils.GetSystemTheme()
+                        ) ?? _availableThemes.FirstOrDefault()!;
         }
 
-        public List<AppSkinModel> AvailableSkins()
+        public List<AppThemeModel> AvailableThemes()
         {
-            return _availableSkins;
+            return _availableThemes;
         }
 
-        public void ChangeSkin(string skin)
+        public void ChangeTheme(string theme)
         {
-            var newSkin = _availableSkins.FirstOrDefault(x => x.Name!.Equals(skin, StringComparison.OrdinalIgnoreCase));
-            if (newSkin is not null && newSkin != _currentSkin)
+            var newTheme = _availableThemes.FirstOrDefault(x => x.Name!.Equals(theme, StringComparison.OrdinalIgnoreCase));
+            if (newTheme is not null && newTheme != currentTheme)
             {
-                _settings.Skin = skin;
-                _currentSkin = newSkin;
-                OnSkinChanged?.Invoke();
+                currentTheme = newTheme;
+                OnThemeChanged?.Invoke();
             }
         }
         #endregion Skin

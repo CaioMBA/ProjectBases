@@ -2,6 +2,7 @@
 using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
+using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 
 namespace Domain
@@ -10,7 +11,9 @@ namespace Domain
     {
         private readonly AppSettingsModel _appSettings;
         private readonly IPlatformSpecificServices _platformService;
-        public AppUtils(AppSettingsModel appSettings, IPlatformSpecificServices platformService)
+        public AppUtils(AppSettingsModel appSettings,
+                        IPlatformSpecificServices platformService,
+                        ILogger<AppUtils> logger)
         {
             _appSettings = appSettings;
             _platformService = platformService;
@@ -52,18 +55,12 @@ namespace Domain
             return FileSystem.AppDataDirectory;
         }
 
-        public string GetSystemTheme()
+        public AppTheme GetSystemTheme()
         {
-            return AppInfo.Current.RequestedTheme switch
-            {
-                AppTheme.Light => "light",
-                AppTheme.Dark => "dark",
-                AppTheme.Unspecified => "light",
-                _ => "light"
-            };
+            return AppInfo.Current.RequestedTheme;
         }
 
-        public async Task<string?> GetFromSecurityStorage(SecurityStorageVariablesEnum Enum)
+        public async Task<string?> GetFromSecurityStorage(SecurityStorageVariables Enum)
         {
             var cryptedValue = await SecureStorage.Default.GetAsync(Enum.ToString());
             if (String.IsNullOrEmpty(cryptedValue))
@@ -87,13 +84,13 @@ namespace Domain
             }
         }
 
-        public async Task SetToSecurityStorage(SecurityStorageVariablesEnum Enum, string Value)
+        public async Task SetToSecurityStorage(SecurityStorageVariables Enum, string Value)
         {
             string cryptedValue = Value.Encrypt();
             await SecureStorage.Default.SetAsync(Enum.ToString(), cryptedValue);
         }
 
-        public void RemoveFromSecurityStorage(SecurityStorageVariablesEnum Enum)
+        public void RemoveFromSecurityStorage(SecurityStorageVariables Enum)
         {
             SecureStorage.Default.Remove(Enum.ToString());
         }
@@ -103,13 +100,13 @@ namespace Domain
             SecureStorage.Default.RemoveAll();
         }
 
-        public void SetToPreferences(PreferenceVariablesEnum Enum, string Value)
+        public void SetToPreferences(PreferenceVariables Enum, string Value)
         {
             string cryptedValue = Value.Encrypt();
             Preferences.Set(Enum.ToString(), cryptedValue);
         }
 
-        public string? GetFromPreferences(PreferenceVariablesEnum Enum)
+        public string? GetFromPreferences(PreferenceVariables Enum)
         {
             var cryptedValue = Preferences.Get(Enum.ToString(), null);
             if (String.IsNullOrEmpty(cryptedValue))
@@ -132,7 +129,7 @@ namespace Domain
             }
         }
 
-        public void RemoveFromPreferences(PreferenceVariablesEnum Enum)
+        public void RemoveFromPreferences(PreferenceVariables Enum)
         {
             Preferences.Remove(Enum.ToString());
         }
@@ -142,9 +139,9 @@ namespace Domain
             Preferences.Clear();
         }
 
-        public void OpenUrl(string Url)
+        public async Task OpenUrl(string Url)
         {
-            Launcher.OpenAsync(new Uri(Url));
+            await Launcher.OpenAsync(new Uri(Url));
         }
 
         public async Task<FileResult?> PickFileResult()
@@ -168,7 +165,7 @@ namespace Domain
 
         public async Task SendLocalNotification(string title, string message)
         {
-            _platformService.SendLocalNotification(title, message);
+            await _platformService.SendLocalNotification(title, message);
         }
     }
 }

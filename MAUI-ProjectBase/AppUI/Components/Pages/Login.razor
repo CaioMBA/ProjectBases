@@ -30,22 +30,20 @@
 
 
 @code {
-    private LoginViewModel loginModel = new LoginViewModel();
+    private readonly LoginViewModel loginModel = new();
 
     private async Task HandleLogin()
     {
-        _settingsService.AddLog($"AttemptLogin by: {loginModel.Email}");
-        var x = _settingsService.logEntities();
         var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(new UserSessionModel()
-            {
-                Id = "0",
-                Name = loginModel.Email!.Split('@').FirstOrDefault(),
-                Email = loginModel.Email,
-                Token = "xpto",
-                Language = "en-us",
-                Roles = new List<string> { "Admin" }
-            }, loginModel.RememberMe);
+        {
+            Id = "0",
+            Name = loginModel.Email!.Split('@').FirstOrDefault(),
+            Email = loginModel.Email,
+            Token = "xpto",
+            Language = "en-us",
+            Roles = new List<string> { "Admin" }
+        }, loginModel.RememberMe);
         _navigation.NavigateTo("/");
     }
 }

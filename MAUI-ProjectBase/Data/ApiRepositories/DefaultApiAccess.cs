@@ -1,4 +1,5 @@
-﻿using Domain.Extensions;
+﻿using Domain.Enums;
+using Domain.Extensions;
 using Domain.Models.ApplicationConfigurationModels.ApiDefaultModels;
 using System.Text;
 using System.Web;
@@ -11,16 +12,16 @@ namespace Data.ApiRepositories
         {
             using (HttpClient httpClient = new HttpClient())
             {
-                HttpMethod Method = ApiRequest.TypeRequest.ToUpper().Trim() switch
+                HttpMethod Method = ApiRequest.TypeRequest switch
                 {
-                    "GET" => HttpMethod.Get,
-                    "POST" => HttpMethod.Post,
-                    "PUT" => HttpMethod.Put,
-                    "DELETE" => HttpMethod.Delete,
-                    "HEAD" => HttpMethod.Head,
-                    "OPTIONS" => HttpMethod.Options,
-                    "TRACE" => HttpMethod.Trace,
-                    "PATCH" => HttpMethod.Patch,
+                    ApiRequestMethod.GET => HttpMethod.Get,
+                    ApiRequestMethod.POST => HttpMethod.Post,
+                    ApiRequestMethod.PUT => HttpMethod.Put,
+                    ApiRequestMethod.DELETE => HttpMethod.Delete,
+                    ApiRequestMethod.HEAD => HttpMethod.Head,
+                    ApiRequestMethod.OPTIONS => HttpMethod.Options,
+                    ApiRequestMethod.TRACE => HttpMethod.Trace,
+                    ApiRequestMethod.PATCH => HttpMethod.Patch,
                     _ => throw new InvalidOperationException("Nenhum Método Aceito"),
                 };
 
@@ -78,7 +79,7 @@ namespace Data.ApiRepositories
             RestApiRequestModel request = new()
             {
                 Url = GraphQlRequest.Url,
-                TypeRequest = "POST",
+                TypeRequest = ApiRequestMethod.POST,
                 Authentication = GraphQlRequest.Authentication,
                 Headers = null,
                 Body = new
