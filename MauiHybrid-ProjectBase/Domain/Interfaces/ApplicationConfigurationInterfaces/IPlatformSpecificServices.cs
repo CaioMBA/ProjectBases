@@ -11,5 +11,7 @@
         Task OpenDirectory(string folderPath);
 
         Task SendLocalNotification(string title, string message, double NotifyTime = 1);
+
+        Task<string?> ScanBarcodeAsync();
     }
 }

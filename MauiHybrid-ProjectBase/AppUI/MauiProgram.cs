@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Maui;
 using CrossCutting;
-using Domain;
 using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
+using ZXing.Net.Maui.Controls;
 
 namespace AppUI
 {
@@ -14,16 +14,16 @@ namespace AppUI
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
-            builder
-                .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .UseLocalNotification()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("Kadwa-Regular.ttf", "Kadwa");
-                    fonts.AddFont("Kadwa-Bold.ttf", "KadwaBold");
-                });
+            builder.UseMauiApp<App>()
+                   .UseMauiCommunityToolkit()
+                   .UseLocalNotification()
+                   .UseBarcodeReader()
+                   .ConfigureFonts(fonts =>
+                   {
+                       fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                       fonts.AddFont("Kadwa-Regular.ttf", "Kadwa");
+                       fonts.AddFont("Kadwa-Bold.ttf", "KadwaBold");
+                   });
 
             builder.Services.AddMauiBlazorWebView();
             ConfigureMauiPlatformDependencies(builder.Services);

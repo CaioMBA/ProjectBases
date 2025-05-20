@@ -140,5 +140,19 @@ namespace AppUI.Platforms.Windows
             await toast.Show();
         }
         #endregion
+
+        #region Camera
+        public async Task<string?> ScanBarcodeAsync()
+        {
+            var scannerPage = new AppUI.Components.Pages.HandlingPages.BarcodeScanner();
+            var nav = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+            if (nav == null)
+            {
+                throw new InvalidOperationException("No navigation context available.");
+            }
+            await nav.PushModalAsync(scannerPage);
+            return await scannerPage.GetResultAsync();
+        }
+        #endregion
     }
 }

@@ -1,7 +1,6 @@
 ﻿@page "/counter"
 @using Domain
 @attribute [Authorize]
-@inject AppUtils utils;
 <h1>Counter</h1>
 
 <p role="status">Current count: @currentCount</p>
@@ -15,13 +14,33 @@
     </NotAuthorized>
 </AuthorizeView>
 
+<button class="btn btn-primary" @onclick="ReadBarcode">Read barcode!</button>
+@if (!String.IsNullOrEmpty(scannedCode))
+{
+    <br />
+    <span>Scanned code: @(scannedCode)</span>
+}
 
 @code {
     private int currentCount = 0;
+    private string scannedCode = string.Empty;
 
     private async Task IncrementCount()
     {
-        await utils.SendLocalNotification("Counter", "Incremented count by 1");
+        await _utils.SendLocalNotification("Counter", "Incremented count by 1");
         currentCount++;
+    }
+
+    private async Task ReadBarcode()
+    {
+        scannedCode = await _utils.ScanBarcode();
+        if (!string.IsNullOrEmpty(scannedCode))
+        {
+            await _utils.SendLocalNotification("Scanned code",scannedCode);
+        }
+        else
+        {
+            await _utils.SendLocalNotification("Scanned code", "No barcode scanned");
+        }
     }
 }

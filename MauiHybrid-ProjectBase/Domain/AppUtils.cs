@@ -167,5 +167,10 @@ namespace Domain
         {
             await _platformService.SendLocalNotification(title, message);
         }
+
+        public async Task<string?> ScanBarcode()
+        {
+            return await _platformService.ScanBarcodeAsync();
+        }
     }
 }

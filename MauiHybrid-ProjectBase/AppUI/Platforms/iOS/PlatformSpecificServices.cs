@@ -110,6 +110,8 @@ namespace AppUI.Platforms.iOS
             }
         }
         #endregion
+
+        #region Local Notifications
         public async Task SendLocalNotification(string title, string message, double NotifyTime = 1)
         {
             var notification = new NotificationRequest
@@ -132,5 +134,20 @@ namespace AppUI.Platforms.iOS
 
             await LocalNotificationCenter.Current.Show(notification);
         }
+        #endregion
+
+        #region Camera
+        public async Task<string?> ScanBarcodeAsync()
+        {
+            var scannerPage = new AppUI.Components.Pages.HandlingPages.BarcodeScanner();
+            var nav = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+            if (nav == null)
+            {
+                throw new InvalidOperationException("No navigation context available.");
+            }
+            await nav.PushModalAsync(scannerPage);
+            return await scannerPage.GetResultAsync();
+        }
+        #endregion
     }
 }
