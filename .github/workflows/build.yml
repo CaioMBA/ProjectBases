@@ -42,7 +42,7 @@ jobs:
       - name: Build and analyze
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CaioMBA_ProjectBases_0f8fdfd8-7992-47a2-8f7e-e03a80174179" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CaioMBA_ProjectBases_0f8fdfd8-7992-47a2-8f7e-e03a80174179" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.exclusions="**/wwwroot/lib/**/*"
 
           Get-ChildItem -Recurse -Filter *.sln | ForEach-Object { dotnet build $_.FullName }
 
