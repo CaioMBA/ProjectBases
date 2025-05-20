@@ -31,7 +31,7 @@ namespace AppUI
             AppSettingsModel? appSettings = LoadConfigurations().Result;
             if (appSettings == null)
             {
-                throw new Exception("AppSettingsModel not found");
+                throw new InvalidOperationException("AppSettingsModel not found");
             }
             List<AppLanguageModel> availableLanguages = LoadAvailableLanguages(builder.Services).Result;
 
@@ -66,7 +66,7 @@ namespace AppUI
             {
                 using (var reader = new StreamReader(stream))
                 {
-                    string content = await reader.ReadToEndAsync();
+                    string content = reader.ReadToEndAsync().Result;
 
                     return content.ToObject<AppSettingsModel>();
                 }
