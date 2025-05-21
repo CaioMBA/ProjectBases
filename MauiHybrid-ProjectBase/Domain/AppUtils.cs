@@ -27,11 +27,11 @@ namespace Domain
         public DataBaseConnectionModel GetDataBase(string DataBaseID)
         {
             DataBaseConnectionModel? Conection = (from v in _appSettings.DataBaseConnectionModels
-                                                  where v.DataBaseID.ToUpper() == DataBaseID.ToUpper()
+                                                  where v.DataBaseID.Equals(DataBaseID, StringComparison.OrdinalIgnoreCase)
                                                   select v).FirstOrDefault();
             if (Conection == null)
             {
-                throw new Exception($"API not found using Id: {DataBaseID}");
+                throw new InvalidOperationException($"Database not found using Id: {DataBaseID}");
             }
 
             return Conection;
@@ -40,14 +40,44 @@ namespace Domain
         public ApiConnectionModel GetApi(string ApiID)
         {
             ApiConnectionModel? Conection = (from v in _appSettings.ApiConnections
-                                             where v.ApiID.ToUpper() == ApiID.ToUpper()
+                                             where v.ApiID.Equals(ApiID, StringComparison.OrdinalIgnoreCase)
                                              select v).FirstOrDefault();
             if (Conection == null)
             {
-                throw new Exception($"API not found using Id: {ApiID}");
+                throw new InvalidOperationException($"API not found using Id: {ApiID}");
             }
 
             return Conection;
+        }
+
+        public ApiEndPointConnectionModel GetApiEndpoint(string ApiID, string EndpointID)
+        {
+            ApiConnectionModel Api = GetApi(ApiID);
+
+            ApiEndPointConnectionModel? Endpoint = (from v in Api.EndPoints
+                                                    where v.EndPointID.Equals(EndpointID, StringComparison.OrdinalIgnoreCase)
+                                                    select v).FirstOrDefault();
+            if (Endpoint == null)
+            {
+                throw new InvalidOperationException($"API endpoint not found using Id: {Endpoint}");
+            }
+
+            return Endpoint;
+
+        }
+
+        public ApiEndPointConnectionModel GetApiEndpoint(ApiConnectionModel Api, string EndpointID)
+        {
+            ApiEndPointConnectionModel? Endpoint = (from v in Api.EndPoints
+                                                    where v.EndPointID.Equals(EndpointID, StringComparison.OrdinalIgnoreCase)
+                                                    select v).FirstOrDefault();
+            if (Endpoint == null)
+            {
+                throw new InvalidOperationException($"API endpoint not found using Id: {Endpoint}");
+            }
+
+            return Endpoint;
+
         }
 
         public string GetSystemFilePath()

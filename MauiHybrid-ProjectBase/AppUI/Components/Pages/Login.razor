@@ -30,7 +30,11 @@
 
 
 @code {
-    private readonly LoginViewModel loginModel = new();
+    private readonly LoginViewModel loginModel = new()
+    {
+        Email = "c@g",
+        Password = "123123"
+    };
 
     private async Task HandleLogin()
     {
