@@ -26,7 +26,7 @@ namespace Domain
 
         public DataBaseConnectionModel GetDataBase(string DataBaseID)
         {
-            DataBaseConnectionModel? Conection = (from v in _appSettings.DataBaseConnectionModels
+            DataBaseConnectionModel? Conection = (from v in _appSettings.DataBaseConnections
                                                   where v.DataBaseID.Equals(DataBaseID, StringComparison.OrdinalIgnoreCase)
                                                   select v).FirstOrDefault();
             if (Conection == null)
