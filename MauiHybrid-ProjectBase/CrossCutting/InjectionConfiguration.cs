@@ -81,14 +81,15 @@ namespace CrossCutting
             #endregion
 
             #region API
+            serviceCollection.AddHttpClient();
             serviceCollection.AddTransient<DefaultApiAccess>();
             #endregion
         }
 
         public static void ConfigureDependenciesExtras(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddMemoryCache();
+            serviceCollection.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddSingleton<AppUtils>();
 
         }

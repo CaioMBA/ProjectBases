@@ -11,4 +11,8 @@
 		<ProjectReference Include="..\Data\Data.csproj" />
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.Maui.Controls" Version="9.0.70" />
+	</ItemGroup>
 </Project>

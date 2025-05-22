@@ -21,11 +21,13 @@ public class BarcodeScanner : ContentPage
             VerticalOptions = LayoutOptions.Fill,
             Options = new BarcodeReaderOptions
             {
-                Formats = BarcodeFormat.QrCode | BarcodeFormat.Code128 | BarcodeFormat.Ean13,
                 AutoRotate = true,
-                TryHarder = true,
-                TryInverted = true,
-                Multiple = false
+                TryHarder = false,
+                TryInverted = false,
+                Multiple = false,
+                Formats = BarcodeFormat.QrCode 
+                | BarcodeFormat.Ean13 
+                | BarcodeFormat.Code128
             }
         };
 
@@ -97,9 +99,6 @@ public class BarcodeScanner : ContentPage
                 new RowDefinition { Height = GridLength.Auto }
             },
             BackgroundColor = Colors.Black,
-            WidthRequest = 350,
-            HeightRequest = 500,
-            Padding = 0,
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center
         };
@@ -136,10 +135,11 @@ public class BarcodeScanner : ContentPage
             var width = this.Width * 0.95;
             var height = this.Height * 0.8;
 
-            outerWrapper.WidthRequest = width;
+            outerWrapper.WidthRequest = width * 1.01;
             outerWrapper.HeightRequest = height;
 
             popupContent.WidthRequest = width;
+            popupContent.HeightRequest = height * 0.95;
 
             cameraContainer.WidthRequest = width;
             cameraContainer.HeightRequest = height * 0.6;
