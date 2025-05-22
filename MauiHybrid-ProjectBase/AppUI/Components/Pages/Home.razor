@@ -1,10 +1,9 @@
-﻿@using AppUI.Components.Pages.HandlingPages
-@page "/"
+﻿@page "/"
 @attribute [Authorize]
 
 <AuthorizeView>
     <Authorized>
-        <h1>Hello, @(context.User.Identity.Name)</h1>
+        <h1>Hello, @(context.User.Identity?.Name)</h1>
     </Authorized>
     <NotAuthorized>
         <h1>Hello, anonymous</h1>
@@ -12,8 +11,13 @@
 </AuthorizeView>
 
 Welcome to your new app.
+<br />
+<button class="btn btn-success" @onclick='() => _navigation.NavigateTo("/counter", false)'>Counter</button>
+<br />
 <a href="/not-found">not found</a>
+<br />
 <a href="/forbidden">forbidden</a>
+<br />
 <a href="/loading">loading</a>
 
 @code {

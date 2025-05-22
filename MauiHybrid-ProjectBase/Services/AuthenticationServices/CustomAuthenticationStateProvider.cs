@@ -20,9 +20,8 @@ namespace Services.AuthenticationServices
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var authenticationState = new AuthenticationState(_anonymous);
-            _currentUserSession = null;
 
-            var UserSession = await _accountServices.GetUserSession();
+            var UserSession = _currentUserSession ?? await _accountServices.GetUserSession();
             if (UserSession is not null)
             {
                 _currentUserSession = UserSession;

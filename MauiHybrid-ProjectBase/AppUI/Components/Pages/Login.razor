@@ -4,7 +4,7 @@
 @attribute [AllowAnonymous]
 
 
-<link rel="stylesheet" href="css/login.css" />
+<link rel="stylesheet" href="css/Pages/Account/login.css" />
 
 <EditForm class="login-form" Model="@loginModel" OnValidSubmit="HandleLogin">
     <h1>Sign-In</h1>
@@ -21,7 +21,7 @@
     </label>
     <label for="rememberme-input">
         <span>Remember</span>
-        <InputCheckbox id="rememberme-input" @bind-Value="loginModel.RememberMe" type="checkbox" />
+        <InputCheckbox id="rememberme-input" @bind-Value="loginModel.RememberMe" type="checkbox"/>
         <ValidationMessage For="@(() => loginModel.RememberMe)" />
     </label>
 
@@ -30,11 +30,7 @@
 
 
 @code {
-    private readonly LoginViewModel loginModel = new()
-    {
-        Email = "c@g",
-        Password = "123123"
-    };
+    private readonly LoginViewModel loginModel = new();
 
     private async Task HandleLogin()
     {

@@ -22,10 +22,6 @@ namespace Services.AuthenticationServices
             if (!string.IsNullOrEmpty(userSessionJson))
             {
                 var user = userSessionJson.ToObject<UserSessionModel>()!;
-                if (user == null)
-                {
-                    return null;
-                }
                 return user;
             }
             return null;
