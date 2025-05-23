@@ -12,9 +12,6 @@ namespace Services
 {
     public class JobService : CustomService<JobService>, IJobService
     {
-        private const int _maxAttempts = 5;
-        private const int _timeoutMinutes = 3;
-
         public JobService(ILogger<JobService> logger,
                           IMapper mapper,
                           Utils utils)
@@ -71,25 +68,19 @@ namespace Services
         }
         #endregion
 
-        [DisplayName("RunFireAndForgetJob")]//use brackets and their positions to show the parameters, example: {0} would be the parameter on this function [ context ] 
-        [DisableConcurrentExecution(timeoutInSeconds: 60 * _timeoutMinutes)]
-        [AutomaticRetry(Attempts = _maxAttempts, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
+
         public void RunFireAndForgetJob(PerformContext? context)
         {
             CS_Log($"Fire-and-Forget Job Executed at {DateTime.UtcNow}", LogType.Information, context);
         }
 
-        [DisplayName("RunDelayedJob")]//use brackets and their positions to show the parameters, example: {0} would be the parameter on this function [ context ] 
-        [DisableConcurrentExecution(timeoutInSeconds: 60 * _timeoutMinutes)]
-        [AutomaticRetry(Attempts = _maxAttempts, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
+
         public void RunDelayedJob(PerformContext? context)
         {
             CS_Log($"Delayed Job Executed at {DateTime.UtcNow}", LogType.Information, context);
         }
 
-        [DisplayName("RunRecurringJob")]//use brackets and their positions to show the parameters, example: {0} would be the parameter on this function [ context ] 
-        [DisableConcurrentExecution(timeoutInSeconds: 60 * _timeoutMinutes)]
-        [AutomaticRetry(Attempts = _maxAttempts, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
+
         public void RunRecurringJob(PerformContext? context)
         {
             CS_Log($"Recurring Job Executed at {DateTime.UtcNow}", LogType.Information, context);

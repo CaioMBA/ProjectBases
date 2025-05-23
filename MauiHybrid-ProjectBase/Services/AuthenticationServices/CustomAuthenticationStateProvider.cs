@@ -21,7 +21,7 @@ namespace Services.AuthenticationServices
         {
             var authenticationState = new AuthenticationState(_anonymous);
 
-            var UserSession = _currentUserSession ?? await _accountServices.GetUserSession();
+            var UserSession = await CurrentUserSession();
             if (UserSession is not null)
             {
                 _currentUserSession = UserSession;
@@ -54,9 +54,9 @@ namespace Services.AuthenticationServices
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
 
-        public UserSessionModel? CurrentUserSession()
+        public async Task<UserSessionModel?> CurrentUserSession()
         {
-            return _currentUserSession;
+            return _currentUserSession ?? await _accountServices.GetUserSession();
         }
 
         private ClaimsPrincipal GetClaimsPrincipal(UserSessionModel userSession)

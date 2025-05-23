@@ -59,6 +59,7 @@ namespace CrossCutting
             #endregion
 
             #region API
+            serviceCollection.AddHttpClient();
             serviceCollection.AddTransient<DefaultApiAccess>();
             #endregion
         }
