@@ -24,6 +24,7 @@ namespace Services.AuthenticationServices
                 if (!string.IsNullOrEmpty(userSessionJson))
                 {
                     var user = userSessionJson.ToObject<UserSessionModel>()!;
+                    await SetUserPreferences(user);
                     return user;
                 }
                 return null;

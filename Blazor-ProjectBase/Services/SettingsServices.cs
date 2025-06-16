@@ -20,6 +20,7 @@ namespace Services
         public AppThemeModel currentTheme { get; private set; }
 
 
+
         public SettingsServices(IDbContextFactory<AppDbContext> dbFactory)
         {
             _availableLanguages = AvailableLanguages();
@@ -45,7 +46,7 @@ namespace Services
                     LanguageName = "English",
                     LanguageCode = "en-US",
                     LanguageFlag = "/assets/images/languages/en-us.svg",
-                    loading_text = "Loading...",
+                    loading_text = "Loading",
                     not_found_p = "Oops! The page you are looking for does not exist.",
                     not_found_a = "Press to go back [ Home ] - Automatic in",
                     forbidden_p = "Oops! You don't have permission for this page.",
@@ -54,6 +55,21 @@ namespace Services
                     login_password_input_label = "Password",
                     sidebar_logout_button = "Logout",
                     sidebar_home = "Home"
+                },
+                new AppLanguageModel
+                {
+                    LanguageName = "Português",
+                    LanguageCode = "pt-BR",
+                    LanguageFlag = "/assets/images/languages/pt-br.svg",
+                    loading_text = "Carregando",
+                    not_found_p = "Opa! A página que está procurando não existe!",
+                    not_found_a = "Pressione para voltar [ Início ] - Automático em",
+                    forbidden_p = "Opa! Você não tem permissão para acessar está página",
+                    forbidden_a = "Pressione para voltar [ Início ] - Automático em",
+                    login_username_input_label = "Usuário",
+                    login_password_input_label = "Senha",
+                    sidebar_logout_button = "Desconectar",
+                    sidebar_home = "Início"
                 }
             ];
         }

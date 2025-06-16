@@ -59,15 +59,15 @@ namespace Services.AuthenticationServices
             return _currentUserSession ?? await _accountServices.GetUserSession();
         }
 
-        private ClaimsPrincipal GetClaimsPrincipal(UserSessionModel userSession)
+        private static ClaimsPrincipal GetClaimsPrincipal(UserSessionModel userSession)
         {
             var claimList = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, userSession.Name),
-                new Claim(ClaimTypes.Email, userSession.Email),
+                new Claim(ClaimTypes.Name, userSession?.Name ?? "anonymous"),
+                new Claim(ClaimTypes.Email, userSession?.Email ?? string.Empty),
             };
 
-            foreach (var role in userSession.Roles)
+            foreach (var role in userSession?.Roles ?? [])
             {
                 claimList.Add(new Claim(ClaimTypes.Role, role));
             }

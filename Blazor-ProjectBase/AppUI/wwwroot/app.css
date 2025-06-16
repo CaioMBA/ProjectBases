@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color-scheme: normal;
 }
 
 html, body {
@@ -11,6 +12,7 @@ html, body {
 body {
     height: 100dvh;
     width: 100dvw;
+    color: var(--text-color);
 }
 
 a, .btn-link {
@@ -290,7 +292,7 @@ h1:focus {
         position: sticky;
         top: 0;
         height: env(safe-area-inset-top);
-        background-color: #f7f7f7;
+        background-color: var(--background-color);
         width: 100%;
         z-index: 1;
     }

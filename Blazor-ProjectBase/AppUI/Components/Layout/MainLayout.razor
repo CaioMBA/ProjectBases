@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+<link rel="stylesheet" href="@(_settingsService.currentTheme.Path)" />
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -86,8 +88,13 @@
 
         UpdateUI();
     }
-    private void ChangeDropdownSelectedValue(string DropdownID, string newValue)
+    private void ChangeDropdownSelectedValue(string DropdownID, string? newValue)
     {
+        if (String.IsNullOrEmpty(newValue))
+        {
+            return;
+        }
+
         switch (DropdownID.ToLower().Trim())
         {
             case "theme":
@@ -147,7 +154,7 @@
 
     private async void UpdateUI()
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

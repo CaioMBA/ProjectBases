@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["AppUI.styles.css"]" />
-    <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <ImportMap />
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 
@@ -19,3 +19,21 @@
 </body>
 
 </html>
+
+@code {
+    protected override void OnInitialized()
+    {
+        _settingsService.OnLanguageChanged += UpdateUI;
+        _settingsService.OnThemeChanged += UpdateUI;
+    }
+    private async void UpdateUI()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _settingsService.OnLanguageChanged -= UpdateUI;
+        _settingsService.OnThemeChanged -= UpdateUI;
+    }
+}
