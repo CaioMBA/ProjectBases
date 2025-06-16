@@ -1,0 +1,37 @@
+﻿@page "/forbidden"
+@attribute [AllowAnonymous]
+
+<link rel="stylesheet" href="css/AppHandling/forbidden.css" />
+
+<div class="forbidden-container">
+    <h1>403</h1>
+    <p>@(_settingsService.currentLanguage.forbidden_p)</p>
+    <a href="/">@(_settingsService.currentLanguage.forbidden_a) @secondsRemaining</a>
+</div>
+
+@code {
+    private Timer? timer;
+    private int secondsRemaining = 5;
+
+    protected override void OnInitialized()
+    {
+        timer = new Timer(_ =>
+        {
+            if (secondsRemaining > 0)
+            {
+                secondsRemaining--;
+                InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                InvokeAsync(() => _navigation.NavigateTo("/"));
+                timer?.Dispose();
+            }
+        }, null, 1000, 1000);
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}

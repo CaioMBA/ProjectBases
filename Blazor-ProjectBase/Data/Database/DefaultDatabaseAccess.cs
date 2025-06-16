@@ -30,7 +30,7 @@ namespace Data.Database
                 DataBaseType.MYSQL => new MySqlConnection(bd.ConnectionString),
                 DataBaseType.MARIADB => new MySqlConnection(bd.ConnectionString),
                 DataBaseType.POSTGRESQL => new NpgsqlConnection(bd.ConnectionString),
-                _ => throw new NotSupportedException($"Database type '{bd.Type.ToString()}' is not supported.")
+                _ => throw new NotSupportedException($"Database type '{bd.Type}' is not supported.")
             };
 
             if (_connection.State == ConnectionState.Closed)

@@ -7,6 +7,6 @@
   "forbidden_a": "Press to go back [ Home ] - Automatic in",
   "login_username_input_label": "Username",
   "login_password_input_label": "Password",
-  "sidebar_logout_button": "Disconnect",
+  "sidebar_logout_button": "Logout",
   "sidebar_home": "Home"
 }

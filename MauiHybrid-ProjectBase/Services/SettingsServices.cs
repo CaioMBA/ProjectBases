@@ -62,7 +62,7 @@ namespace Services
         #endregion Language
 
 
-        #region Skin
+        #region Theme
         private AppThemeModel GetStartTheme()
         {
             return _availableThemes.FirstOrDefault(x =>

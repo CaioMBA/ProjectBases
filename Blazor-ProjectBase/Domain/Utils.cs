@@ -1,32 +1,40 @@
 ﻿using Domain.Enums;
+using Domain.Extensions;
+using Domain.Interfaces.BlazorUiInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Diagnostics;
+
 
 namespace Domain
 {
     public class Utils
     {
-        private readonly AppSettingsModel _appSettings;
+        private readonly IOptionsMonitor<AppSettingsModel> _optionsMonitor;
         private readonly IHttpContextAccessor _http;
         private readonly IMemoryCache _cache;
         private readonly ILogger<Utils> _logger;
-        public Utils(AppSettingsModel appSettings,
+        private readonly IBlazorStorageService _blazorStorage;
+
+        public Utils(IOptionsMonitor<AppSettingsModel> optionsMonitor,
                      IMemoryCache cache,
                      IHttpContextAccessor http,
-                     ILogger<Utils> logger)
+                     ILogger<Utils> logger,
+                     IBlazorStorageService blazorStorage)
         {
-            _appSettings = appSettings;
+            _optionsMonitor = optionsMonitor;
             _http = http;
             _cache = cache;
             _logger = logger;
+            _blazorStorage = blazorStorage;
         }
 
         public DataBaseConnectionModel GetDataBase(string DataBaseID)
         {
-            DataBaseConnectionModel? Conection = (from v in _appSettings.DataBaseConnections
+            DataBaseConnectionModel? Conection = (from v in _optionsMonitor.CurrentValue.DataBaseConnections
                                                   where v.DataBaseID.Equals(DataBaseID, StringComparison.OrdinalIgnoreCase)
                                                   select v).FirstOrDefault();
             if (Conection == null)
@@ -39,7 +47,7 @@ namespace Domain
 
         public ApiConnectionModel GetApi(string ApiID)
         {
-            ApiConnectionModel? Conection = (from v in _appSettings.ApiConnections
+            ApiConnectionModel? Conection = (from v in _optionsMonitor.CurrentValue.ApiConnections
                                              where v.ApiID.Equals(ApiID, StringComparison.OrdinalIgnoreCase)
                                              select v).FirstOrDefault();
             if (Conection == null)
@@ -62,6 +70,21 @@ namespace Domain
             }
             return EndPoint;
         }
+
+        public ApiEndPointConnectionModel GetApiEndpoint(ApiConnectionModel Api, string EndpointID)
+        {
+            ApiEndPointConnectionModel? Endpoint = (from v in Api.EndPoints
+                                                    where v.EndPointID.Equals(EndpointID, StringComparison.OrdinalIgnoreCase)
+                                                    select v).FirstOrDefault();
+            if (Endpoint == null)
+            {
+                throw new InvalidOperationException($"API endpoint not found using Id: {Endpoint}");
+            }
+
+            return Endpoint;
+
+        }
+
 
         public T? GetMemoryObject<T>(string key)
         {
@@ -116,28 +139,82 @@ namespace Domain
             return System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).HostName;
         }
 
-        public void SetOrUpdateCookie(string key, string value)
+        public async Task SetOrUpdateProtectedStorage(ProtectedStorageVariable key, string value)
         {
-            _http.HttpContext.Response.Cookies.Append(key, value, new CookieOptions
+            try
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddDays(30)
-            });
+                await _blazorStorage.SetToProtectedStorage(key, value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to set or update protected storage for key: {Key}", key);
+                throw new InvalidOperationException($"Could not set protected storage for {key}, error: {ex.Message}");
+            }
         }
 
-        public string? GetCookie(string key)
+        public async Task<string> GetFromProtectedStorage(ProtectedStorageVariable key)
         {
-            if (_http.HttpContext.Request.Cookies.TryGetValue(key, out string? value))
+            try
             {
-                return value;
+                return await _blazorStorage.GetFromProtectedStorage(key);
             }
-            return null;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get protected storage for key: {Key}", key);
+                throw new InvalidOperationException($"Could not get protected storage for {key}, error: {ex.Message}");
+            }
         }
-        public void RemoveCookie(string key)
+
+        public async Task RemoveFromProtectedStorage(ProtectedStorageVariable key)
         {
-            _http.HttpContext.Response.Cookies.Delete(key);
+            try
+            {
+                await _blazorStorage.RemoveFromProtectedStorage(key);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to remove protected storage for key: {Key}", key);
+                throw new InvalidOperationException($"Could not remove protected storage for {key}, error: {ex.Message}");
+            }
+        }
+
+        public async Task SetOrUpdateProtectedSession(ProtectedSessionVariable key, string value)
+        {
+            try
+            {
+                await _blazorStorage.SetToProtectedSession(key, value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to set or update protected session for key: {Key}", key);
+                throw new InvalidOperationException($"Could not set protected session for {key}, error: {ex.Message}");
+            }
+        }
+
+        public async Task<string> GetFromProtectedSession(ProtectedSessionVariable key)
+        {
+            try
+            {
+                return await _blazorStorage.GetFromProtectedSession(key);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get protected session for key: {Key}", key);
+                throw new InvalidOperationException($"Could not get protected session for {key}, error: {ex.Message}");
+            }
+        }
+
+        public async Task RemoveFromProtectedSession(ProtectedSessionVariable key)
+        {
+            try
+            {
+                await _blazorStorage.RemoveFromProtectedSession(key);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to remove protected session for key: {Key}", key);
+                throw new InvalidOperationException($"Could not remove protected session for {key}, error: {ex.Message}");
+            }
         }
     }
 }

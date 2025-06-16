@@ -7,7 +7,45 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <div class="custom_dropdown-container">
+                <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("theme")'>
+                    <img src="@(_settingsService.currentTheme.Icon)" />
+                    @(_settingsService.currentTheme.Name)
+                </button>
+
+                @if (isThemeDropdownOpen)
+                {
+                    <ul class="custom_dropdown-menu">
+                        @foreach (var theme in availableThemes)
+                        {
+                            <li @onclick='() => ChangeDropdownSelectedValue("theme", theme.Name)'>
+                                <img src="@theme.Icon" />
+                                <span>@theme.Name</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+            <div class="custom_dropdown-container">
+                <button class="custom_dropdown-btn" @onclick='() => ToggleDropdown("language")'>
+                    <img src="@(_settingsService.currentLanguage.LanguageFlag)" />
+                    @(_settingsService.currentLanguage.LanguageName)
+                </button>
+
+                @if (isLanguageDropdownOpen)
+                {
+                    <ul class="custom_dropdown-menu">
+                        @foreach (var language in availableLanguages)
+                        {
+                            <li @onclick='() => ChangeDropdownSelectedValue("language", language.LanguageCode)'>
+                                <img src="@language.LanguageFlag" />
+                                <span>@language.LanguageName</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+            <button @onclick="LogOut" class="btn">@(_settingsService.currentLanguage.sidebar_logout_button)</button>
         </div>
 
         <article class="content px-4">
@@ -21,3 +59,100 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+<script src="js/MainLayout.js"></script>
+
+@code {
+    private List<AppLanguageModel> availableLanguages => _settingsService.AvailableLanguages();
+    private List<AppThemeModel> availableThemes => _settingsService.AvailableThemes();
+    private bool isLanguageDropdownOpen = false;
+    private bool isThemeDropdownOpen = false;
+
+    private void ToggleDropdown(string ID)
+    {
+        switch (ID.ToLower().Trim())
+        {
+            case "theme":
+                isThemeDropdownOpen = !isThemeDropdownOpen;
+                break;
+
+            case "language":
+                isLanguageDropdownOpen = !isLanguageDropdownOpen;
+                break;
+
+            default:
+                break;
+        }
+
+        UpdateUI();
+    }
+    private void ChangeDropdownSelectedValue(string DropdownID, string newValue)
+    {
+        switch (DropdownID.ToLower().Trim())
+        {
+            case "theme":
+                _settingsService.ChangeTheme(newValue);
+                break;
+
+            case "language":
+                _settingsService.ChangeLanguage(newValue);
+                break;
+
+            default:
+                break;
+        }
+
+        ToggleDropdown(DropdownID);
+    }
+
+    private void LogOut()
+    {
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;
+        customAuthStateProvider.UpdateAuthenticationState(null);
+    }
+
+    protected override void OnInitialized()
+    {
+        _settingsService.OnLanguageChanged += UpdateUI;
+        _settingsService.OnThemeChanged += UpdateUI;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await _jsRuntime.InvokeVoidAsync("preventF5");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            try
+            {
+                var customAuthStateProvider = (CustomAuthenticationStateProvider)_authStateProvider;
+                var session = await customAuthStateProvider.CurrentUserSession();
+                if (session is not null)
+                {
+                    await customAuthStateProvider.UpdateAuthenticationState(session);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+
+    private async void UpdateUI()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _settingsService.OnLanguageChanged -= UpdateUI;
+        _settingsService.OnThemeChanged -= UpdateUI;
+    }
+}

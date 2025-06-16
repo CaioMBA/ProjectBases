@@ -63,6 +63,11 @@ namespace Domain.Extensions
             return sb.ToString();
         }
 
+        public static string? StringFromBytes(this byte[] bytes)
+        {
+            return Encoding.UTF8.GetString(bytes);
+        }
+
         public static Expression<Func<T, bool>> ToLambdaFilter<T>(this IDictionary<string, object?> filters)
         {
             var objectName = typeof(T).Name;

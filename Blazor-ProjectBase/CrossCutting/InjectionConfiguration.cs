@@ -4,24 +4,26 @@ using Data.Database;
 using Data.Database.DapperHandlers;
 using Data.Database.EntityFrameworkContexts;
 using Domain;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Domain.Mappings;
-using Domain.Models.ApplicationConfigurationModels;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Services;
+using Services.AuthenticationServices;
 
 namespace CrossCutting
 {
     public static class InjectionConfiguration
     {
-        public static void ConfigureDependencies(IServiceCollection serviceCollection,
-                                                 AppSettingsModel appSettings)
+        public static async Task ConfigureDependencies(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddSingleton<AppSettingsModel>(appSettings);
             ConfigureDependenciesExtras(serviceCollection);
             ConfigureAutoMapper(serviceCollection);
             ConfigureDependenciesService(serviceCollection);
-            ConfigureDependenciesRepository(serviceCollection).Wait();
+            await ConfigureDependenciesRepository(serviceCollection);
+            ConfigureDependenciesStartup(serviceCollection);
         }
 
         public static void ConfigureAutoMapper(IServiceCollection serviceCollection)
@@ -34,6 +36,7 @@ namespace CrossCutting
 
         public static void ConfigureDependenciesService(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddSingleton<ISettingsServices, SettingsServices>();
         }
 
         public static async Task ConfigureDependenciesRepository(IServiceCollection serviceCollection)
@@ -54,7 +57,17 @@ namespace CrossCutting
 
                     using (var dbContext = await dbFactory.CreateDbContextAsync())
                     {
-                        await dbContext.Database.MigrateAsync();
+                        try
+                        {
+#if DEBUG
+                            await dbContext.Database.EnsureDeletedAsync();
+#endif
+                            await dbContext.Database.MigrateAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Database migration failed. Exception: {ex.Message}");
+                        }
                     }
                 }
             }
@@ -63,20 +76,29 @@ namespace CrossCutting
             #endregion
 
             #region API
+            serviceCollection.AddHttpClient();
             serviceCollection.AddTransient<DefaultApiAccess>();
             #endregion
         }
 
         public static void ConfigureDependenciesExtras(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            #region Memory
             serviceCollection.AddMemoryCache();
-            serviceCollection.AddSingleton<Utils>();
+            serviceCollection.AddDistributedMemoryCache();
+            #endregion
+
+            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            serviceCollection.AddScoped<Utils>();
         }
 
         public static void ConfigureDependenciesStartup(IServiceCollection serviceCollection)
         {
-
+            #region Authentication
+            serviceCollection.AddScoped<IAccountServices, AccountServices>();
+            serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            serviceCollection.AddAuthorizationCore();
+            #endregion
         }
     }
 }
