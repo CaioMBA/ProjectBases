@@ -33,7 +33,35 @@ InjectionConfiguration.ConfigureDependencies(builder.Services, appSettings);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc($"v{appSettings.AppVersion}", new OpenApiInfo { Title = appSettings.AppName, Version = appSettings.AppVersion.ToString() });
+    c.SwaggerDoc($"v{appSettings.AppVersion}", new OpenApiInfo
+    {
+        Title = appSettings.AppName,
+        Version = appSettings.AppVersion.ToString()
+    });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter JWT Bearer token **_only_** (without 'Bearer ' prefix)",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer", // must be lowercase
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
+    };
+
+    c.AddSecurityRequirement(securityRequirement);
 });
 
 var app = builder.Build();
