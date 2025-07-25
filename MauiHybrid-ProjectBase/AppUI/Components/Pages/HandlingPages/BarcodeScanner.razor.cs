@@ -4,7 +4,7 @@ using ZXing.Net.Maui.Controls;
 
 namespace AppUI.Components.Pages.HandlingPages;
 
-public class BarcodeScanner : ContentPage
+public class BarcodeScanner : ContentPage, IDisposable
 {
     private readonly TaskCompletionSource<string?> _scanResultSource = new();
     private readonly CameraBarcodeReaderView _scanner;
@@ -25,8 +25,8 @@ public class BarcodeScanner : ContentPage
                 TryHarder = false,
                 TryInverted = false,
                 Multiple = false,
-                Formats = BarcodeFormat.QrCode 
-                | BarcodeFormat.Ean13 
+                Formats = BarcodeFormat.QrCode
+                | BarcodeFormat.Ean13
                 | BarcodeFormat.Code128
             }
         };
@@ -176,4 +176,13 @@ public class BarcodeScanner : ContentPage
     }
 
     public Task<string?> GetResultAsync() => _scanResultSource.Task;
+
+    public void Dispose()
+    {
+        if (_scanner != null)
+        {
+            _scanner.BarcodesDetected -= Scanner_BarcodesDetected;
+        }
+        _scanResultSource.TrySetCanceled();
+    }
 }

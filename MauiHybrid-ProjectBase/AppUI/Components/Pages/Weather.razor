@@ -1,5 +1,6 @@
 ﻿@page "/weather"
 @attribute [Authorize]
+@implements IDisposable;
 
 <h1>Weather</h1>
 
@@ -37,7 +38,7 @@ else
 @code {
     private WeatherForecast[]? forecasts;
 
-    private class WeatherForecast
+    private sealed class WeatherForecast
     {
         public DateOnly Date { get; set; }
         public int TemperatureC { get; set; }
