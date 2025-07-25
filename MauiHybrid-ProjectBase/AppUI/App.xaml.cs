@@ -1,6 +1,4 @@
-﻿using Data.DatabaseRepositories.EntityFrameworkContexts;
-using Domain.Models.ApplicationConfigurationModels;
-using Microsoft.EntityFrameworkCore;
+﻿using Domain.Models.ApplicationConfigurationModels;
 
 namespace AppUI
 {
