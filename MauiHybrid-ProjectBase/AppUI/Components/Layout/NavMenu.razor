@@ -31,6 +31,15 @@
     {
         _settingsService.OnLanguageChanged += UpdateUI;
         _settingsService.OnThemeChanged += UpdateUI;
+        _refreshViewState.PropertyChanged += OnPropertyChanged;
+    }
+
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(_refreshViewState.IsRefreshing) && _refreshViewState.IsRefreshing)
+        {
+            UpdateUI();
+        }
     }
 
     private async void UpdateUI()
@@ -42,5 +51,6 @@
     {
         _settingsService.OnLanguageChanged -= UpdateUI;
         _settingsService.OnThemeChanged -= UpdateUI;
+        _refreshViewState.PropertyChanged -= OnPropertyChanged;
     }
 }

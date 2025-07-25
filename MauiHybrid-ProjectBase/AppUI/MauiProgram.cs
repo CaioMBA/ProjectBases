@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Maui;
+﻿using AppUI.States.ViewStates;
+using CommunityToolkit.Maui;
 using CrossCutting;
 using Domain.Extensions;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
+using Domain.Interfaces.StateInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
@@ -51,6 +53,7 @@ namespace AppUI
 
         private static void ConfigureMauiPlatformDependencies(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddSingleton<IRefreshViewState, RefreshViewState>();
 #if ANDROID
             serviceCollection.AddSingleton<IPlatformSpecificServices, AppUI.Platforms.Android.PlatformSpecificServices>();
 #elif IOS

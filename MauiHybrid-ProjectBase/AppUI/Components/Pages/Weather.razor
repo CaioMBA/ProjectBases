@@ -37,9 +37,36 @@ else
 @code {
     private WeatherForecast[]? forecasts;
 
+    private class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+        _settingsService.OnLanguageChanged += UpdateUI;
+        _settingsService.OnThemeChanged += UpdateUI;
+        _refreshViewState.PropertyChanged += OnPropertyChanged;
+    }
+
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(_refreshViewState.IsRefreshing) && _refreshViewState.IsRefreshing)
+        {
+            await LoadData();
+            UpdateUI();
+        }
+    }
+
+    private async Task LoadData()
+    {
         // Simulate asynchronous loading to demonstrate a loading indicator
+        forecasts = null; // Clear previous data to show loading state
+        UpdateUI();
         await Task.Delay(500);
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
@@ -50,13 +77,18 @@ else
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary = summaries[Random.Shared.Next(summaries.Length)]
         }).ToArray();
+        _refreshViewState.IsRefreshing = false;
     }
 
-    private class WeatherForecast
+    private async void UpdateUI()
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _settingsService.OnLanguageChanged -= UpdateUI;
+        _settingsService.OnThemeChanged -= UpdateUI;
+        _refreshViewState.PropertyChanged -= OnPropertyChanged;
     }
 }

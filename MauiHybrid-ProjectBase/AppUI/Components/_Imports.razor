@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http;
 @using System.Net.Http.Json;
+@using System.ComponentModel;
 @using Microsoft.AspNetCore.Components.Forms;
 @using Microsoft.AspNetCore.Components.Routing;
 @using Microsoft.AspNetCore.Components.Web;
@@ -11,11 +12,13 @@
 @using AppUI.Components;
 @using AppUI.Components.Pages.HandlingPages;
 @using Domain;
-@using Domain.Models.ViewModels;
 @using Domain.Extensions;
-@using Domain.Models.ApplicationConfigurationModels;
+@using Domain.Interfaces.StateInterfaces
 @using Domain.Interfaces.ApplicationConfigurationInterfaces
+@using Domain.Models.ViewModels;
+@using Domain.Models.ApplicationConfigurationModels;
 @using Services.AuthenticationServices;
+@inject IRefreshViewState _refreshViewState;
 @inject AppUtils _utils;
 @inject AuthenticationStateProvider _authStateProvider;
 @inject NavigationManager _navigation;
