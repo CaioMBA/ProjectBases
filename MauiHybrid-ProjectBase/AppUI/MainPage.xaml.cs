@@ -4,17 +4,17 @@ namespace AppUI
 {
     public partial class MainPage : ContentPage
     {
-        private readonly IRefreshViewState _refreshViewState;
+        private readonly IRefreshViewState _refreshState;
         public MainPage(IRefreshViewState refreshState)
         {
-            _refreshViewState = refreshState;
+            _refreshState = refreshState;
             InitializeComponent();
-            BindingContext = _refreshViewState;
+            BindingContext = _refreshState;
         }
 
-        private void Refreshing(object? sender, EventArgs e)
+        private void OnRefresh(object sender, EventArgs e)
         {
-            _refreshViewState.IsRefreshing = true;
+            _refreshState.Refresh(sender, e);
         }
     }
 }

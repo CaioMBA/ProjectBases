@@ -48,6 +48,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        _refreshViewState.IsEnabled = true;
         await LoadData();
         _settingsService.OnLanguageChanged += UpdateUI;
         _settingsService.OnThemeChanged += UpdateUI;
@@ -68,7 +69,7 @@ else
         // Simulate asynchronous loading to demonstrate a loading indicator
         forecasts = null; // Clear previous data to show loading state
         UpdateUI();
-        await Task.Delay(500);
+        await Task.Delay(1000);
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
         var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
@@ -91,5 +92,6 @@ else
         _settingsService.OnLanguageChanged -= UpdateUI;
         _settingsService.OnThemeChanged -= UpdateUI;
         _refreshViewState.PropertyChanged -= OnPropertyChanged;
+        _refreshViewState.IsEnabled = false;
     }
 }

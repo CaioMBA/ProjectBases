@@ -8,5 +8,7 @@ namespace Domain.Interfaces.StateInterfaces
         bool IsEnabled { get; set; }
 
         event PropertyChangedEventHandler? PropertyChanged;
+
+        void Refresh(object? sender, EventArgs e);
     }
 }

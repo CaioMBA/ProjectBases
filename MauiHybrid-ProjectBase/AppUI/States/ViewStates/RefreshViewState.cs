@@ -37,5 +37,15 @@ namespace AppUI.States.ViewStates
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void Refresh(object? sender, EventArgs e)
+        {
+            if (IsEnabled)
+            {
+                IsRefreshing = true;
+                return;
+            }
+            IsRefreshing = false;
+        }
     }
 }
