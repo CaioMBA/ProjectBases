@@ -7,11 +7,26 @@
              x:Class="AppUI.MainPage"
              x:DataType="states:RefreshViewState">
 
-    <RefreshView x:Name="refreshView" IsRefreshing="{Binding IsRefreshing}" Refreshing="OnRefresh">
-        <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-            <BlazorWebView.RootComponents>
-                <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
-            </BlazorWebView.RootComponents>
-        </BlazorWebView>
-    </RefreshView>
+    
+    <ContentPage.Resources>
+        <DataTemplate x:Key="WithRefreshTemplate">
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Refreshing="OnRefresh">
+                <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+                    <BlazorWebView.RootComponents>
+                        <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
+                    </BlazorWebView.RootComponents>
+                </BlazorWebView>
+            </RefreshView>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WithoutRefreshTemplate">
+            <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <ContentView x:Name="RootContentView" />
 </ContentPage>

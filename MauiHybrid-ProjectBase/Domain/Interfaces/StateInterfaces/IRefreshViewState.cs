@@ -9,6 +9,6 @@ namespace Domain.Interfaces.StateInterfaces
 
         event PropertyChangedEventHandler? PropertyChanged;
 
-        void Refresh(object? sender, EventArgs e);
+        void Refresh(object? sender, EventArgs? e);
     }
 }
