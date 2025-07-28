@@ -9,18 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services
 {
-    public class ExampleService : IExampleService
+    public class ExampleService(Utils utils, IMapper mapper, IDbContextFactory<AppDbContext> dbFactory) : IExampleService
     {
-        private readonly Utils _utils;
-        private readonly IMapper _mapper;
-        private readonly IDbContextFactory<AppDbContext> _dbFactory;
-
-        public ExampleService(Utils utils, IMapper mapper, IDbContextFactory<AppDbContext> dbFactory)
-        {
-            _utils = utils;
-            _mapper = mapper;
-            _dbFactory = dbFactory;
-        }
+        private readonly Utils _utils = utils;
+        private readonly IMapper _mapper = mapper;
+        private readonly IDbContextFactory<AppDbContext> _dbFactory = dbFactory;
 
         public async Task<DefaultReponseModel> Example()
         {

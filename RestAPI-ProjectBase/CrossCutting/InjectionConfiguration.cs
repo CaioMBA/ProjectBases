@@ -1,5 +1,7 @@
-﻿using Data.Api;
+﻿using Dapper;
+using Data.Api;
 using Data.Database;
+using Data.Database.DapperHandlers;
 using Data.Database.EntityFrameworkContexts;
 using Domain;
 using Domain.Enums;
@@ -8,8 +10,10 @@ using Domain.Mappings;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Services;
 
 
@@ -17,15 +21,15 @@ namespace CrossCutting
 {
     public static class InjectionConfiguration
     {
-        public static void ConfigureDependencies(IServiceCollection serviceCollection,
-                                                 AppSettingsModel appSettings)
+        public static async Task ConfigureDependencies(IServiceCollection serviceCollection,
+                                                       IConfiguration configuration)
         {
-            serviceCollection.AddSingleton<AppSettingsModel>(appSettings);
+            serviceCollection.Configure<AppSettingsModel>(configuration);
             ConfigureDependenciesExtras(serviceCollection);
-            ConfigureDependenciesHealth(serviceCollection, appSettings);
+            ConfigureDependenciesHealth(serviceCollection);
             ConfigureAutoMapper(serviceCollection);
             ConfigureDependenciesService(serviceCollection);
-            ConfigureDependenciesRepository(serviceCollection);
+            await ConfigureDependenciesRepository(serviceCollection);
         }
 
         public static void ConfigureAutoMapper(IServiceCollection serviceCollection)
@@ -43,7 +47,7 @@ namespace CrossCutting
             serviceCollection.AddTransient<IExampleService, ExampleService>();
         }
 
-        public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
+        public static async Task ConfigureDependenciesRepository(IServiceCollection serviceCollection)
         {
             #region DataBase
             #region Entity Framework
@@ -53,16 +57,27 @@ namespace CrossCutting
                 using (var scope = serviceProvider.CreateScope())
                 {
                     var dbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
-                    using var dbContext = dbFactory.CreateDbContext();
-
-                    dbContext.Database.Migrate();
+                    using (var dbContext = await dbFactory.CreateDbContextAsync())
+                    {
+                        await dbContext.Database.MigrateAsync();
+                    }
                 }
             }
+            #endregion
+            #region Dapper Type Handlers
+            SqlMapper.AddTypeHandler(new JsonArrayTypeHandler());
+            SqlMapper.AddTypeHandler(new JsonObjectTypeHandler());
+            SqlMapper.AddTypeHandler(new JsonNodeTypeHandler());
+            SqlMapper.AddTypeHandler(new CronExpressionTypeHandler());
+            SqlMapper.AddTypeHandler(new DictionaryTypeHandler());
+            SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+            SqlMapper.AddTypeHandler(new TimeOnlyTypeHandler());
             #endregion
             serviceCollection.AddTransient<DefaultDatabaseAccess>();
             #endregion
 
             #region API
+            serviceCollection.AddHttpClient();
             serviceCollection.AddTransient<DefaultApiAccess>();
             #endregion
         }
@@ -78,12 +93,14 @@ namespace CrossCutting
         {
 
         }
-        public static void ConfigureDependenciesHealth(IServiceCollection serviceCollection,
-                                                       AppSettingsModel settings)
+
+        public static void ConfigureDependenciesHealth(IServiceCollection serviceCollection)
         {
+            var settings = serviceCollection.BuildServiceProvider().GetRequiredService<IOptionsMonitor<AppSettingsModel>>().CurrentValue;
+
             var healthChecksBuilder = serviceCollection.AddHealthChecks();
 
-            foreach (var db in settings.DataBaseConnections ?? new())
+            foreach (var db in settings.DataBaseConnections ?? [])
             {
                 var name = $"DB-{db.DataBaseID}";
 
@@ -119,7 +136,7 @@ namespace CrossCutting
                 }
             }
 
-            foreach (var api in settings.ApiConnections ?? new())
+            foreach (var api in settings.ApiConnections ?? [])
             {
                 var apiUrl = new Uri(api.Url);
                 var healthUrl = new Uri(apiUrl, "health");

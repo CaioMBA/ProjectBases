@@ -114,5 +114,10 @@ namespace Domain.Extensions
         {
             return JsonConvert.DeserializeObject<T>(str);
         }
+
+        public static string? ToUriEscaped(this String str)
+        {
+            return Uri.EscapeDataString(str);
+        }
     }
 }

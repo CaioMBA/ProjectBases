@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Linq.Expressions;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Web;
 
 namespace Domain.Extensions
 {
@@ -102,6 +103,25 @@ namespace Domain.Extensions
             }
 
             return Expression.Lambda<Func<T, bool>>(combinedExpression, parameter);
+        }
+
+        public static string ToQueryString(this IDictionary<string, object?>? parameters)
+        {
+            if (parameters == null || !parameters.Any())
+            {
+                return string.Empty;
+            }
+
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            foreach (var param in parameters)
+            {
+                if (param.Value != null)
+                {
+                    query[param.Key] = param.Value.ToString();
+                }
+            }
+
+            return query?.ToString() ?? string.Empty;
         }
     }
 }

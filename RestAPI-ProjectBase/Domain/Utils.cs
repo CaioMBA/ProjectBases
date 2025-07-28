@@ -2,21 +2,20 @@
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Diagnostics;
 
 namespace Domain
 {
-    public class Utils
+    public class Utils(IOptionsMonitor<AppSettingsModel> options,
+                       IMemoryCache cache,
+                       ILogger<Utils> logger)
     {
-        private readonly AppSettingsModel _appSettings;
-        private readonly IMemoryCache _cache;
-        private readonly ILogger<Utils> _logger;
-        public Utils(AppSettingsModel appSettings, IMemoryCache cache, ILogger<Utils> logger)
-        {
-            _appSettings = appSettings;
-            _cache = cache;
-            _logger = logger;
-        }
+        private readonly AppSettingsModel _appSettings = options.CurrentValue;
+        private readonly IMemoryCache _cache = cache;
+        private readonly ILogger<Utils> _logger = logger;
+
+        public AppSettingsModel GetSettings() => _appSettings;
 
         public DataBaseConnectionModel GetDataBase(string DataBaseID)
         {

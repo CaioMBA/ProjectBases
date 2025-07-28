@@ -8,8 +8,8 @@ namespace Domain.Models.ApplicationConfigurationModels.ApiDefaultModels
         public required ApiRequestMethod Method { get; set; }
         public string? Body { get; set; }
         public double? TimeOut { get; set; }
-        public IDictionary<string, string?>? Headers { get; set; }
-        public IDictionary<string, string?>? QueryParameters { get; set; }
+        public IDictionary<string, object?>? Headers { get; set; }
+        public IDictionary<string, object?>? QueryParameters { get; set; }
         public AuthenticationHeaderModel? Authentication { get; set; }
     }
 }

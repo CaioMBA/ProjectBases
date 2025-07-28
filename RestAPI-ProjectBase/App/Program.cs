@@ -22,12 +22,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddOpenApi();
 
 #region Injection Configuration
-var appSettings = new AppSettingsModel();
-new ConfigureFromConfigurationOptions<AppSettingsModel>(
-              builder.Configuration.GetSection("Settings"))
-                  .Configure(appSettings);
+var configuration = builder.Configuration.GetSection("Settings");
 
-InjectionConfiguration.ConfigureDependencies(builder.Services, appSettings);
+var appSettings = configuration.Get<AppSettingsModel>() ?? throw new ArgumentException("appsettings.json not found");
+
+await InjectionConfiguration.ConfigureDependencies(builder.Services, configuration);
 #endregion
 
 builder.Services.AddEndpointsApiExplorer();

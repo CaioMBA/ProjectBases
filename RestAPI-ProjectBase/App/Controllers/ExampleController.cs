@@ -9,17 +9,11 @@ namespace App.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ExampleController : ControllerBase
+    public class ExampleController(Utils utils, IExampleService service) : ControllerBase
     {
-        private readonly Utils _utils;
+        private readonly Utils _utils = utils;
 
-        private readonly IExampleService _service;
-
-        public ExampleController(Utils utils, IExampleService service)
-        {
-            _utils = utils;
-            _service = service;
-        }
+        private readonly IExampleService _service = service;
 
         [HttpGet]
         [ProducesResponseType(typeof(DefaultReponseModel), (int)HttpStatusCode.OK)]
