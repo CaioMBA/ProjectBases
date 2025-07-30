@@ -147,6 +147,7 @@ namespace AppUI.Platforms.Android
                 throw new InvalidOperationException("No navigation context available.");
             }
             await nav.PushModalAsync(scannerPage);
+
             return await scannerPage.GetResultAsync();
         }
         #endregion

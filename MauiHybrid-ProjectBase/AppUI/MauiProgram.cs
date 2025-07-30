@@ -1,4 +1,5 @@
 ﻿using AppUI.States.ViewStates;
+using Camera.MAUI;
 using CommunityToolkit.Maui;
 using CrossCutting;
 using Domain.Extensions;
@@ -7,7 +8,6 @@ using Domain.Interfaces.StateInterfaces;
 using Domain.Models.ApplicationConfigurationModels;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
-using ZXing.Net.Maui.Controls;
 
 namespace AppUI
 {
@@ -18,8 +18,8 @@ namespace AppUI
             var builder = MauiApp.CreateBuilder();
             builder.UseMauiApp<App>()
                    .UseMauiCommunityToolkit()
+                   .UseMauiCameraView()
                    .UseLocalNotification()
-                   .UseBarcodeReader()
                    .ConfigureFonts(fonts =>
                    {
                        fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

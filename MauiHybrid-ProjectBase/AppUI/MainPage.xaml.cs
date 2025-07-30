@@ -18,8 +18,8 @@ namespace AppUI
 
         private DataTemplate GetTemplateForPlatform()
         {
-            if (DeviceInfo.Platform == DevicePlatform.Android
-                || DeviceInfo.Platform == DevicePlatform.iOS)
+            List<DevicePlatform> refreshDevices = [DevicePlatform.Android, DevicePlatform.iOS];
+            if (refreshDevices.Contains(DeviceInfo.Platform))
             {
                 return (DataTemplate)Resources["WithRefreshTemplate"];
             }

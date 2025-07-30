@@ -34,10 +34,11 @@ namespace CrossCutting
 
         public static void ConfigureAutoMapper(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddAutoMapper(
-                typeof(EntityToModelMapping).Assembly,
-                typeof(ModelToDtoMapping).Assembly
-                );
+            serviceCollection.AddAutoMapper(options =>
+            {
+                options.AddProfile<EntityToModelMapping>();
+                options.AddProfile<ModelToDtoMapping>();
+            });
         }
 
         public static void ConfigureDependenciesService(IServiceCollection serviceCollection)

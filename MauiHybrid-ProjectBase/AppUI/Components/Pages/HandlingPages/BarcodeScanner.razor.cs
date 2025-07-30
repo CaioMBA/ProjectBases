@@ -1,37 +1,43 @@
-﻿using Microsoft.Maui.Controls.Shapes;
-using ZXing.Net.Maui;
-using ZXing.Net.Maui.Controls;
+﻿using Camera.MAUI;
+using Camera.MAUI.ZXing;
+using Camera.MAUI.ZXingHelper;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace AppUI.Components.Pages.HandlingPages;
 
-public class BarcodeScanner : ContentPage, IDisposable
+public class BarcodeScanner : ContentPage
 {
     private readonly TaskCompletionSource<string?> _scanResultSource = new();
-    private readonly CameraBarcodeReaderView _scanner;
+    private readonly CameraView _scanner;
     private bool _isClosing = false;
 
     public BarcodeScanner()
     {
         BackgroundColor = Colors.Transparent;
 
-        _scanner = new CameraBarcodeReaderView
+        _scanner = new CameraView
         {
-            IsDetecting = true,
+            IsEnabled = true,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-            Options = new BarcodeReaderOptions
+            FlashMode = FlashMode.Auto,
+            ControlBarcodeResultDuplicate = true,
+            BarCodeDetectionFrameRate = 10,
+            BarCodeDetectionMaxThreads = 5,
+            BarCodeDecoder = new ZXingBarcodeDecoder(),
+            BarCodeDetectionEnabled = true,
+            BarCodeOptions = new BarcodeDecodeOptions
             {
+                PossibleFormats = [BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128, BarcodeFormat.EAN_13],
                 AutoRotate = true,
+                ReadMultipleCodes = true,
                 TryHarder = false,
-                TryInverted = false,
-                Multiple = false,
-                Formats = BarcodeFormat.QrCode
-                | BarcodeFormat.Ean13
-                | BarcodeFormat.Code128
-            }
+                TryInverted = false
+            },
         };
 
-        _scanner.BarcodesDetected += Scanner_BarcodesDetected;
+        _scanner.CamerasLoaded += CamerasLoaded;
+        _scanner.BarcodeDetected += Scanner_BarcodesDetected;
 
         var header = new Grid
         {
@@ -68,7 +74,7 @@ public class BarcodeScanner : ContentPage, IDisposable
                     TextColor = Colors.White,
                     FontAttributes = FontAttributes.Bold,
                     CornerRadius = 5,
-                    Command = new Command(() => _scanner.IsTorchOn = !_scanner.IsTorchOn)
+                    Command = new Command(() => _scanner.TorchEnabled = !_scanner.TorchEnabled)
                 },
                 new Button
                 {
@@ -149,12 +155,43 @@ public class BarcodeScanner : ContentPage, IDisposable
         };
     }
 
-    private async void Scanner_BarcodesDetected(object? sender, BarcodeDetectionEventArgs e)
+    private async void CamerasLoaded(object? sender, EventArgs e)
     {
-        var result = e.Results.FirstOrDefault()?.Value;
-        if (!string.IsNullOrEmpty(result))
+        if (_scanner?.NumMicrophonesDetected > 0)
         {
-            await MainThread.InvokeOnMainThreadAsync(() => CloseScannerAsync(result));
+            _scanner.Microphone = _scanner.Microphones.FirstOrDefault();
+        }
+        if (_scanner?.NumCamerasDetected > 0)
+        {
+            _scanner.Camera = _scanner.Cameras.FirstOrDefault();
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                try
+                {
+                    await _scanner.StopCameraAsync();
+                }
+                finally
+                {
+                    await _scanner.StartCameraAsync();
+                }
+            });
+        }
+
+    }
+
+    private async void Scanner_BarcodesDetected(object? sender, BarcodeEventArgs e)
+    {
+        var result = e.Result.Select(x => new
+        {
+            x.Text,
+            x.BarcodeFormat,
+            x.RawBytes
+        });
+
+
+        if (result.Any())
+        {
+            await MainThread.InvokeOnMainThreadAsync(async () => { await CloseScannerAsync(result.FirstOrDefault()?.Text); });
         }
     }
 
@@ -164,25 +201,37 @@ public class BarcodeScanner : ContentPage, IDisposable
         _isClosing = true;
 
         // Cleanup
-        _scanner.IsDetecting = false;
-        _scanner.BarcodesDetected -= Scanner_BarcodesDetected;
-        _scanResultSource.TrySetResult(result);
-
-        var nav = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
-        if (nav != null)
+        try
         {
-            await nav.PopModalAsync();
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await _scanner.StopCameraAsync();
+
+                var nav = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+                if (nav != null)
+                {
+                    await nav.PopModalAsync();
+                }
+
+                _scanResultSource.TrySetResult(result);
+            });
         }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error closing scanner: {ex.Message}");
+        }
+        finally
+        {
+            _isClosing = false;
+        }
+
     }
 
     public Task<string?> GetResultAsync() => _scanResultSource.Task;
 
-    public void Dispose()
+    protected override void OnDisappearing()
     {
-        if (_scanner != null)
-        {
-            _scanner.BarcodesDetected -= Scanner_BarcodesDetected;
-        }
-        _scanResultSource.TrySetCanceled();
+        base.OnDisappearing();
+        _ = CloseScannerAsync(null);
     }
 }

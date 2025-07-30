@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:AppUI"
              xmlns:states="clr-namespace:AppUI.States.ViewStates"
              xmlns:components="clr-namespace:AppUI.Components"
+             xmlns:cv="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
              x:Class="AppUI.MainPage"
              x:DataType="states:RefreshViewState">
 
