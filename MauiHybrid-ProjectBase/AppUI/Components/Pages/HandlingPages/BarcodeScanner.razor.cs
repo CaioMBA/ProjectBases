@@ -30,7 +30,7 @@ public class BarcodeScanner : ContentPage
             {
                 PossibleFormats = [BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128, BarcodeFormat.EAN_13],
                 AutoRotate = true,
-                ReadMultipleCodes = true,
+                ReadMultipleCodes = false,
                 TryHarder = false,
                 TryInverted = false
             },
@@ -187,7 +187,6 @@ public class BarcodeScanner : ContentPage
             x.BarcodeFormat,
             x.RawBytes
         });
-
 
         if (result.Any())
         {
