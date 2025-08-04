@@ -1,9 +1,12 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Content.Res;
+using Android.OS;
 using CommunityToolkit.Maui.Storage;
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
+using Environment = Android.OS.Environment;
 
 [assembly: Dependency(typeof(AppUI.Platforms.Android.PlatformSpecificServices))]
 namespace AppUI.Platforms.Android
@@ -38,18 +41,18 @@ namespace AppUI.Platforms.Android
             return await Task.FromResult(assetFiles);
         }
 
-        private void ListAssetsRecursive(AssetManager assets, string path, List<string> fileList)
+        private void ListAssetsRecursive(AssetManager? assets, string path, List<string> fileList)
         {
             try
             {
-                string[] files = assets.List(path);
+                string[]? files = assets?.List(path);
                 if (files != null)
                 {
                     foreach (var file in files)
                     {
                         string fullPath = string.IsNullOrEmpty(path) ? file : $"{path}/{file}";
 
-                        string[] subFiles = assets.List(fullPath);
+                        string[]? subFiles = assets?.List(fullPath);
                         if (subFiles?.Length > 0)
                         {
                             ListAssetsRecursive(assets, fullPath, fileList);
@@ -141,7 +144,7 @@ namespace AppUI.Platforms.Android
         public async Task<string?> ScanBarcodeAsync()
         {
             var scannerPage = new AppUI.Components.Pages.HandlingPages.BarcodeScanner();
-            var nav = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+            var nav = Microsoft.Maui.Controls.Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
             if (nav == null)
             {
                 throw new InvalidOperationException("No navigation context available.");
@@ -149,6 +152,70 @@ namespace AppUI.Platforms.Android
             await nav.PushModalAsync(scannerPage);
 
             return await scannerPage.GetResultAsync();
+        }
+        #endregion
+
+        #region SystemInfo
+        public long GetStorage(bool available = false, string? name = null)
+        {
+            try
+            {
+                var statFs = new StatFs(Environment.DataDirectory?.AbsolutePath);
+                return available ? statFs.AvailableBytes : statFs.TotalBytes;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine($"Error getting storage: {ex.Message}");
+                return 0;
+            }
+        }
+
+        public string GetProcessor()
+        {
+            try
+            {
+                return Java.Lang.JavaSystem.GetProperty("os.arch") ?? "Unknown Processor";
+            }
+            catch
+            {
+                return "Unknown Processor";
+            }
+        }
+
+        public long GetRam()
+        {
+            try
+            {
+                var activityManager = (ActivityManager)Platform.AppContext.GetSystemService(Context.ActivityService);
+                var memoryInfo = new ActivityManager.MemoryInfo();
+                activityManager?.GetMemoryInfo(memoryInfo);
+                return memoryInfo.TotalMem;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        public string GetGraphicsCard() => "Android GPU";
+
+        public string GetOsName() => "Android";
+
+        public string GetOsVersion() => Build.VERSION.Release ?? "Unknown";
+
+        public string GetOsArchitecture()
+        {
+            return Build.SupportedAbis?.FirstOrDefault() ?? "Unknown";
+        }
+
+        public string GetMachineName()
+        {
+            return Build.Model ?? "Unknown Device";
+        }
+
+        public string GetUserName()
+        {
+            return "Android User"; // No user concept like Windows
         }
         #endregion
     }

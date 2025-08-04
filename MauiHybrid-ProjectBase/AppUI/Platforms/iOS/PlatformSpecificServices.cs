@@ -2,6 +2,7 @@
 using Domain.Interfaces.ApplicationConfigurationInterfaces;
 using Foundation;
 using MobileCoreServices;
+using ObjCRuntime;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.iOSOption;
 using UIKit;
@@ -147,6 +148,68 @@ namespace AppUI.Platforms.iOS
             }
             await nav.PushModalAsync(scannerPage);
             return await scannerPage.GetResultAsync();
+        }
+        #endregion
+
+        #region SystemInfo
+        public long GetStorage(bool available = false, string? name = null)
+        {
+            // The 'name' parameter is ignored on iOS as it typically has a single main storage volume.
+            try
+            {
+                NSFileSystemAttributes? attributes = NSFileManager.DefaultManager.GetFileSystemAttributes(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Personal)
+                );
+
+                long? storage = available ? (long?)attributes?.FreeSize : (long?)attributes?.Size;
+                if (storage == null)
+                {
+                    Console.WriteLine("Failed to retrieve storage information.");
+                    return 0;
+                }
+
+                return (long)storage;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GetStorage Error] Failed to retrieve storage information: {ex}");
+                return 0;
+            }
+        }
+
+        public string GetProcessor()
+        {
+            return "Apple A-Series"; // No public API to get actual chip (A14, A15, etc.)
+        }
+
+        public long GetRam()
+        {
+            return (long)NSProcessInfo.ProcessInfo.PhysicalMemory;
+        }
+
+        public string GetGraphicsCard()
+        {
+            return "Apple GPU"; // No public API for actual GPU
+        }
+
+        public string GetOsName() => "iOS";
+
+        public string GetOsVersion() => UIDevice.CurrentDevice.SystemVersion;
+
+        public string GetOsArchitecture()
+        {
+            var arch = Runtime.Arch;
+            return arch.ToString();
+        }
+
+        public string GetMachineName()
+        {
+            return UIDevice.CurrentDevice.Name;
+        }
+
+        public string GetUserName()
+        {
+            return UIDevice.CurrentDevice.IdentifierForVendor?.AsString() ?? "Unknown User";
         }
         #endregion
     }

@@ -1,11 +1,13 @@
-﻿using Domain.Interfaces.ApplicationConfigurationInterfaces;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using Domain.Interfaces.ApplicationConfigurationInterfaces;
+using Microsoft.Win32;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Alerts;
 
 [assembly: Dependency(typeof(AppUI.Platforms.Windows.PlatformSpecificServices))]
 namespace AppUI.Platforms.Windows
@@ -34,37 +36,48 @@ namespace AppUI.Platforms.Windows
 
         public async Task<IEnumerable<string>> ListAssetsAsync()
         {
-            var assetFiles = new List<string>();
+            var assetFiles = new ConcurrentBag<string>();
             var assetsPath = Package.Current.InstalledLocation.Path;
 
             if (Directory.Exists(assetsPath))
             {
-                GetFilesRecursive(assetsPath, assetFiles);
+                GetFilesRecursiveParallel(assetsPath, assetFiles);
             }
 
             return await Task.FromResult(assetFiles);
         }
 
-        private void GetFilesRecursive(string directory, List<string> fileList)
+        private static void GetFilesRecursiveParallel(string directory, ConcurrentBag<string> fileList)
         {
             try
             {
-                var files = Directory.GetFiles(directory);
-                foreach (var file in files)
+                string basePath = Package.Current.InstalledLocation.Path;
+                string relativeDirectory = directory.Replace($"{basePath}{Path.DirectorySeparatorChar}", "");
+                if (!Directory.Exists(directory))
                 {
-                    var relativePath = file.Replace($"{Package.Current.InstalledLocation.Path}{Path.DirectorySeparatorChar}", "");
+                    return;
+                }
+                if (relativeDirectory.StartsWith(@"wwwroot\lib", StringComparison.OrdinalIgnoreCase)
+                    || relativeDirectory.StartsWith(@"wwwroot/lib", StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+
+                foreach (var file in Directory.EnumerateFiles(directory))
+                {
+                    var relativePath = file.Replace($"{basePath}{Path.DirectorySeparatorChar}", "");
                     fileList.Add(relativePath);
                 }
 
-                var subDirectories = Directory.GetDirectories(directory);
-                foreach (var subDir in subDirectories)
+                Parallel.ForEach(Directory.EnumerateDirectories(directory), subDir =>
                 {
-                    GetFilesRecursive(subDir, fileList);
-                }
+                    GetFilesRecursiveParallel(subDir, fileList);
+                });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error on AppUI.Platforms.Windows > GetFilesRecursive. Error: {ex.Message}");
+                Console.WriteLine($"Error on AppUI.Platforms.Windows > GetFilesRecursiveParallel. Error: {ex.Message}");
             }
         }
         #endregion
@@ -153,6 +166,109 @@ namespace AppUI.Platforms.Windows
             await nav.PushModalAsync(scannerPage);
             return await scannerPage.GetResultAsync();
         }
+        #endregion
+
+        #region SystemInfo
+        public long GetStorage(bool available = false, string? name = null)
+        {
+            return DriveInfo.GetDrives()
+                .Where(d => d.IsReady
+                            && d.DriveType == DriveType.Fixed
+                            && (String.IsNullOrWhiteSpace(name) || d.Name == name))
+                .Sum(d => (available ? d.TotalFreeSpace : d.TotalSize));
+        }
+
+        public string GetProcessor()
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+                return key?.GetValue("ProcessorNameString")?.ToString() ?? "Unknown Processor";
+            }
+            catch
+            {
+                return "Unknown Processor";
+            }
+        }
+
+        public long GetRam()
+        {
+            return GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
+        }
+
+        public string GetGraphicsCard()
+        {
+            try
+            {
+                string tempDxDiagPath = Path.Combine(Path.GetTempPath(), "dxdiag_output.txt");
+
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "dxdiag",
+                        Arguments = $"/t \"{tempDxDiagPath}\"",
+                        RedirectStandardOutput = false,
+                        Verb = "runas", // Run as administrator
+                        UseShellExecute = true,
+                        CreateNoWindow = true,
+
+                    }
+                };
+
+                process.Start();
+                process.WaitForExit(5000);
+
+                if (File.Exists(tempDxDiagPath))
+                {
+                    var lines = File.ReadAllLines(tempDxDiagPath);
+
+                    // Look for the first "Card name" line
+                    string? cardname = lines.FirstOrDefault(line => line.TrimStart().StartsWith("Card name:", StringComparison.OrdinalIgnoreCase))?.Split(':')[1].Trim();
+
+                    File.Delete(tempDxDiagPath);
+
+                    if (!String.IsNullOrWhiteSpace(cardname))
+                    {
+                        return cardname;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving GPU info via dxdiag: {ex.Message}");
+            }
+
+            return "Unknown Graphics Card";
+        }
+
+        public string GetOsName()
+        {
+            return RuntimeInformation.OSDescription switch
+            {
+                string desc when desc.Contains("Windows") => "Windows",
+                string desc when desc.Contains("Linux") => "Linux",
+                string desc when desc.Contains("Mac OS") => "macOS",
+                _ => "Unknown OS"
+            };
+        }
+
+        public string GetOsVersion() => Environment.OSVersion.Version.Major.ToString();
+
+        public string GetOsArchitecture()
+        {
+            return RuntimeInformation.OSArchitecture switch
+            {
+                Architecture.X64 => "x64",
+                Architecture.Arm64 => "arm64",
+                Architecture.X86 => "x86",
+                _ => "Unknown Architecture"
+            };
+        }
+
+        public string GetMachineName() => Environment.MachineName;
+
+        public string GetUserName() => Environment.UserName;
         #endregion
     }
 }
