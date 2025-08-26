@@ -1,8 +1,10 @@
-﻿namespace Domain.Models.ApplicationConfigurationModels.ApiDefaultModels
+﻿using Domain.Enums;
+
+namespace Domain.Models.ApplicationConfigurationModels.ApiDefaultModels
 {
     public class AuthenticationHeaderModel
     {
-        public required string Type { get; set; }
+        public required ApiAuthorizationType Type { get; set; }
         public required string Authorization { get; set; }
     }
 }
