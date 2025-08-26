@@ -4,6 +4,6 @@ namespace Domain.Interfaces
 {
     public interface IExampleService
     {
-        Task<DefaultReponseModel> Example();
+        Task<DefaultResponseModel> Example();
     }
 }

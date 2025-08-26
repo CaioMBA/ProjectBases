@@ -15,7 +15,7 @@ namespace Services
         private readonly IMapper _mapper = mapper;
         private readonly IDbContextFactory<AppDbContext> _dbFactory = dbFactory;
 
-        public async Task<DefaultReponseModel> Example()
+        public async Task<DefaultResponseModel> Example()
         {
             _utils.SetLog("Services.ExampleService.Example method called", LogType.Information);
             List<LogEntity> currentLogs;
@@ -30,7 +30,7 @@ namespace Services
                 currentLogs = await dbContext.Logs.ToListAsync();
             }
 
-            return new DefaultReponseModel()
+            return new DefaultResponseModel()
             {
                 Success = true,
                 StatusCode = 200,

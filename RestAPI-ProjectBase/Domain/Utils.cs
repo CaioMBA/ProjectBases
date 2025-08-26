@@ -56,6 +56,18 @@ namespace Domain
             return EndPoint;
         }
 
+        public ApiEndPointConnectionModel GetApiEndPoint(ApiConnectionModel Api, string ApiEndPointID)
+        {
+            ApiEndPointConnectionModel? EndPoint = (from v in Api.EndPoints
+                                                    where v.EndPointID.Equals(ApiEndPointID, StringComparison.OrdinalIgnoreCase)
+                                                    select v).FirstOrDefault();
+            if (EndPoint == null)
+            {
+                throw new InvalidOperationException($"API EndPoint not found using Id: {ApiEndPointID}");
+            }
+            return EndPoint;
+        }
+
         public T? GetMemoryObject<T>(string key)
         {
             return _cache.TryGetValue(key, out T? cachedValue) ? cachedValue : default;

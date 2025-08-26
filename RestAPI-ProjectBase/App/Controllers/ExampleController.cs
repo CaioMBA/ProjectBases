@@ -16,7 +16,7 @@ namespace App.Controllers
         private readonly IExampleService _service = service;
 
         [HttpGet]
-        [ProducesResponseType(typeof(DefaultReponseModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(DefaultResponseModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Get()
         {
             _utils.SetLog("ExampleController Get method called", LogType.Information);
