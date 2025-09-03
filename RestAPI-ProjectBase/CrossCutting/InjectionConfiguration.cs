@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Services;
+using System.Net;
+using System.Security.Authentication;
 
 
 namespace CrossCutting
@@ -77,7 +79,26 @@ namespace CrossCutting
             #endregion
 
             #region API
-            serviceCollection.AddHttpClient();
+            serviceCollection.AddHttpClient().ConfigureHttpClientDefaults(c =>
+            {
+                c.ConfigureHttpClient(c =>
+                {
+                    c.DefaultRequestVersion = HttpVersion.Version30;
+                    c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+                    c.Timeout = Timeout.InfiniteTimeSpan;
+                    c.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+                });
+                c.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate | DecompressionMethods.Brotli,
+                    AllowAutoRedirect = true,
+                    SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                    MaxConnectionsPerServer = int.MaxValue,
+                    UseCookies = true,
+                    CookieContainer = new CookieContainer()
+                });
+            });
             serviceCollection.AddTransient<DefaultApiAccess>();
             #endregion
         }
