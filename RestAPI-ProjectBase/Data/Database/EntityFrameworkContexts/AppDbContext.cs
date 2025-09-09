@@ -1,4 +1,5 @@
-﻿using Data.Database.EntityFrameworkContexts.Converters;
+﻿using Data.Database.EntityFrameworkContexts.Comparers;
+using Data.Database.EntityFrameworkContexts.Converters;
 using Data.Database.EntityFrameworkContexts.ValueGenerators;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -22,16 +23,32 @@ namespace Data.Database.EntityFrameworkContexts
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
-            builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-            foreach (var entityType in builder.Model.GetEntityTypes())
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                foreach (var property in entityType.GetProperties().Where(p => p.IsKey() && p.ClrType == typeof(Guid)))
+                foreach (var property in entityType.GetProperties())
                 {
-                    property.SetValueGeneratorFactory((prop, type) => new GuidV7ValueGenerator());
+                    var clearType = property.ClrType;
+                    if (property.IsKey() && clearType == typeof(Guid))
+                    {
+                        property.SetValueGeneratorFactory((prop, type) => new GuidV7ValueGenerator());
+                    }
+                    else if (clearType == typeof(JsonObject))
+                    {
+                        property.SetValueComparer(JsonValueComparers.JsonObjectNullableComparer);
+                    }
+                    else if (clearType == typeof(JsonArray))
+                    {
+                        property.SetValueComparer(JsonValueComparers.JsonArrayNullableComparer);
+                    }
+                    else if (clearType == typeof(JsonNode))
+                    {
+                        property.SetValueComparer(JsonValueComparers.JsonNodeNullableComparer);
+                    }
                 }
             }
         }
